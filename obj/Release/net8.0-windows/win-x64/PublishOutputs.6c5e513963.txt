@@ -1,0 +1,5 @@
+C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\publish\AfranHospitalKiosk.exe
+C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\publish\AfranHospitalKiosk.dll
+C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\publish\AfranHospitalKiosk.deps.json
+C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\publish\AfranHospitalKiosk.runtimeconfig.json
+C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\publish\AfranHospitalKiosk.pdb

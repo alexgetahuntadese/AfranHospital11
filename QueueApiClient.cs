@@ -1,0 +1,85 @@
+using System.Net.Http;
+using System.Net.Http.Json;
+using Microsoft.AspNetCore.SignalR.Client;
+
+namespace AfranHospitalKiosk;
+
+public sealed class QueueApiClient : IAsyncDisposable
+{
+    private readonly HttpClient _httpClient;
+    private HubConnection? _hubConnection;
+
+    public QueueApiClient()
+    {
+        BaseUrl = Environment.GetEnvironmentVariable("AFRAN_QUEUE_API")?.TrimEnd('/')
+            ?? "http://localhost:5000";
+        _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
+    }
+
+    public string BaseUrl { get; }
+
+    public async Task<string?> CreateTicketAsync(string gender, string language)
+    {
+        var response = await _httpClient.PostAsJsonAsync("/api/tickets", new CreateTicketRequest(gender, language));
+        response.EnsureSuccessStatusCode();
+        return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
+    }
+
+    public async Task<string?> CallNextAsync()
+    {
+        var response = await _httpClient.PostAsync("/api/queue/registration/call-next", null);
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
+    }
+
+    public async Task<string?> CompleteAsync()
+    {
+        var response = await _httpClient.PostAsync("/api/queue/registration/complete", null);
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
+    }
+
+    public async Task<QueueDisplay?> GetDisplayAsync()
+    {
+        return await _httpClient.GetFromJsonAsync<QueueDisplay>("/api/queue/registration/display");
+    }
+
+    public async Task ConnectHubAsync(Action<QueueDisplay> onQueueUpdated, Action<TicketDto>? onTicketCalled = null)
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl($"{BaseUrl}/queueHub")
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On("QueueUpdated", onQueueUpdated);
+        if (onTicketCalled is not null)
+        {
+            _hubConnection.On("TicketCalled", onTicketCalled);
+        }
+
+        await _hubConnection.StartAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _httpClient.Dispose();
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+
+    private sealed record CreateTicketRequest(string Gender, string Language);
+    private sealed record TicketResponse(string Ticket);
+}
+
+public sealed record TicketDto(string Ticket, string Gender, string Language, string Status);
+public sealed record QueueDisplay(TicketDto? NowServing, IReadOnlyList<TicketDto> Waiting, int WaitingCount);
