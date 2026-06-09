@@ -52,7 +52,7 @@ public partial class DoctorWindow : Window
         NowCallingLabel.Text = display.NowServing?.Ticket ?? "-";
         if (display.NowServing is not null)
         {
-            RoomLabel.Text = "Registration Room 2";
+            RoomLabel.Text = "Doctor Room 3";
         }
 
         SetQueueRow(1, display.Waiting.ElementAtOrDefault(0));
@@ -105,7 +105,7 @@ public partial class DoctorWindow : Window
         {
             var ticket = await _apiClient.CallNextAsync();
             NowCallingLabel.Text = ticket ?? "-";
-            RoomLabel.Text = ticket is null ? "No waiting tickets." : "Registration Room 2";
+            RoomLabel.Text = ticket is null ? "No waiting patients." : "Doctor Room 3";
             await RefreshDisplayAsync();
         }
         catch

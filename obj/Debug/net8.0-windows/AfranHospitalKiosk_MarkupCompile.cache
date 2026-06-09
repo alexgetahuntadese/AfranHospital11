@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
 C:\Users\USER\Desktop\AfranHospital11\App.xaml
-21052774752
+3111259944
 9-1547450973
 8125058316
 213-421739063
-MainWindow.xaml;TvWindow.xaml;
+DoctorWindow.xaml;MainWindow.xaml;TvWindow.xaml;
 
 False
 
