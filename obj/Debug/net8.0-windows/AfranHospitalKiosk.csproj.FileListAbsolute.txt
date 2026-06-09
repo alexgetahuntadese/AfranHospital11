@@ -1,4 +1,3 @@
-C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\AfranHospitalKiosk.exe
 C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\AfranHospitalKiosk.deps.json
 C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\AfranHospitalKiosk.runtimeconfig.json
 C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\AfranHospitalKiosk.dll
@@ -143,3 +142,4 @@ C:\Users\USER\Desktop\AfranHospital11\build-check\app\Microsoft.Extensions.Loggi
 C:\Users\USER\Desktop\AfranHospital11\build-check\app\Microsoft.Extensions.Options.dll
 C:\Users\USER\Desktop\AfranHospital11\build-check\app\Microsoft.Extensions.Primitives.dll
 C:\Users\USER\Desktop\AfranHospital11\build-check\app\System.IO.Pipelines.dll
+C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\AfranHospitalKiosk.exe

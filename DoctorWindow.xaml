@@ -10,18 +10,18 @@
         WindowState="Maximized"
         WindowStyle="SingleBorderWindow"
         ResizeMode="CanResize"
-        Background="#F3FAFB"
+        Background="#F3F8FF"
         FontFamily="Segoe UI"
         KeyDown="Window_KeyDown">
     <Window.Resources>
-        <SolidColorBrush x:Key="InkBrush" Color="#12313F" />
-        <SolidColorBrush x:Key="MutedBrush" Color="#5E7580" />
-        <SolidColorBrush x:Key="TealBrush" Color="#00A99D" />
-        <SolidColorBrush x:Key="BlueBrush" Color="#0E74C8" />
-        <SolidColorBrush x:Key="GreenBrush" Color="#2EB872" />
+        <SolidColorBrush x:Key="InkBrush" Color="#102A43" />
+        <SolidColorBrush x:Key="MutedBrush" Color="#59758E" />
+        <SolidColorBrush x:Key="AccentBlueBrush" Color="#1D74D8" />
+        <SolidColorBrush x:Key="BlueBrush" Color="#0B5CAD" />
+        <SolidColorBrush x:Key="BrightBlueBrush" Color="#2F80ED" />
         <SolidColorBrush x:Key="PanelBrush" Color="#FFFFFF" />
-        <SolidColorBrush x:Key="SoftBlueBrush" Color="#EAF7FC" />
-        <SolidColorBrush x:Key="LineBrush" Color="#D6E9EF" />
+        <SolidColorBrush x:Key="SoftBlueBrush" Color="#EAF3FF" />
+        <SolidColorBrush x:Key="LineBrush" Color="#CFE3F8" />
 
         <Style x:Key="Panel" TargetType="Border">
             <Setter Property="CornerRadius" Value="8" />
@@ -30,7 +30,7 @@
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect BlurRadius="18" ShadowDepth="5" Direction="270" Opacity="0.10" Color="#315C69" />
+                    <DropShadowEffect BlurRadius="18" ShadowDepth="5" Direction="270" Opacity="0.11" Color="#2A5D91" />
                 </Setter.Value>
             </Setter>
         </Style>
@@ -38,7 +38,7 @@
         <Style x:Key="ActionButton" TargetType="Button">
             <Setter Property="MinHeight" Value="84" />
             <Setter Property="Padding" Value="22" />
-            <Setter Property="Background" Value="{StaticResource TealBrush}" />
+            <Setter Property="Background" Value="{StaticResource AccentBlueBrush}" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Cursor" Value="Hand" />
@@ -68,14 +68,14 @@
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#F8FDFF" Offset="0" />
-                <GradientStop Color="#EEF9F5" Offset="0.55" />
-                <GradientStop Color="#E8F4FF" Offset="1" />
+                <GradientStop Color="#F8FBFF" Offset="0" />
+                <GradientStop Color="#EEF6FF" Offset="0.55" />
+                <GradientStop Color="#E3F0FF" Offset="1" />
             </LinearGradientBrush>
         </Grid.Background>
 
-        <Border Background="#E5F7F5" Height="132" VerticalAlignment="Top" />
-        <Border Background="#0E74C8" Width="8" HorizontalAlignment="Left" />
+        <Border Background="#DDEEFF" Height="132" VerticalAlignment="Top" />
+        <Border Background="#0B5CAD" Width="8" HorizontalAlignment="Left" />
 
         <Grid Margin="34">
             <Grid.RowDefinitions>
@@ -91,12 +91,12 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <Border Background="#F8FFFF" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="8" Padding="16,8" Width="390">
+                    <Border Background="#F8FBFF" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="8" Padding="16,8" Width="390">
                         <Image Source="Assets/afranlogo.png" Height="70" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Left" />
                     </Border>
 
                     <StackPanel Grid.Column="1" Margin="26,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="Doctor station" Foreground="{StaticResource TealBrush}" FontSize="18" FontWeight="Black" />
+                        <TextBlock Text="Doctor station" Foreground="{StaticResource AccentBlueBrush}" FontSize="18" FontWeight="Black" />
                         <TextBlock Text="Clinical consultation queue" Foreground="{StaticResource InkBrush}" FontSize="36" FontWeight="Black" />
                         <TextBlock Text="Review patients, recall tickets, and keep the clinic flow moving." Foreground="{StaticResource MutedBrush}" FontSize="16" FontWeight="SemiBold" />
                     </StackPanel>
@@ -131,8 +131,8 @@
                                 <TextBlock Text="Waiting patients" Foreground="{StaticResource InkBrush}" FontSize="36" FontWeight="Black" />
                                 <TextBlock Text="Patients ready for doctor consultation" Foreground="{StaticResource MutedBrush}" FontSize="17" FontWeight="SemiBold" />
                             </StackPanel>
-                            <Border Grid.Column="1" Background="#E9F9F6" BorderBrush="#BFEDE7" BorderThickness="1" CornerRadius="8" Padding="16,10" VerticalAlignment="Center">
-                                <TextBlock Text="ROOM 3" Foreground="{StaticResource TealBrush}" FontSize="18" FontWeight="Black" />
+                            <Border Grid.Column="1" Background="#EAF3FF" BorderBrush="#B8D9F8" BorderThickness="1" CornerRadius="8" Padding="16,10" VerticalAlignment="Center">
+                                <TextBlock Text="ROOM 3" Foreground="{StaticResource AccentBlueBrush}" FontSize="18" FontWeight="Black" />
                             </Border>
                         </Grid>
 
@@ -194,18 +194,18 @@
                             </Grid.RowDefinitions>
 
                             <StackPanel>
-                                <TextBlock Text="NOW CALLING" Foreground="{StaticResource TealBrush}" FontSize="17" FontWeight="Black" />
+                                <TextBlock Text="NOW CALLING" Foreground="{StaticResource AccentBlueBrush}" FontSize="17" FontWeight="Black" />
                                 <TextBlock Text="Current patient for consultation" Foreground="{StaticResource MutedBrush}" FontSize="16" FontWeight="SemiBold" Margin="0,4,0,0" />
                             </StackPanel>
 
-                            <Border Grid.Row="1" Background="#F0FCFA" BorderBrush="#BFEDE7" BorderThickness="1" CornerRadius="8" Padding="24" Margin="0,22,0,22">
+                            <Border Grid.Row="1" Background="#F0F7FF" BorderBrush="#B8D9F8" BorderThickness="1" CornerRadius="8" Padding="24" Margin="0,22,0,22">
                                 <StackPanel VerticalAlignment="Center">
-                                    <TextBlock x:Name="NowCallingLabel" Text="REG-105" Foreground="{StaticResource GreenBrush}" FontSize="82" FontWeight="Black" HorizontalAlignment="Center" />
+                                    <TextBlock x:Name="NowCallingLabel" Text="REG-105" Foreground="{StaticResource BrightBlueBrush}" FontSize="82" FontWeight="Black" HorizontalAlignment="Center" />
                                     <TextBlock x:Name="RoomLabel" Text="Doctor Room 3" Foreground="{StaticResource InkBrush}" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center" />
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Row="2" Background="#EAF4FF" BorderBrush="#CBE4FA" BorderThickness="1" CornerRadius="8" Padding="18">
+                            <Border Grid.Row="2" Background="#E3F0FF" BorderBrush="#B8D9F8" BorderThickness="1" CornerRadius="8" Padding="18">
                                 <TextBlock Text="Ready for doctor review" Foreground="{StaticResource BlueBrush}" FontSize="22" FontWeight="Black" TextAlignment="Center" />
                             </Border>
                         </Grid>
@@ -223,7 +223,7 @@
                         <Button x:Name="RecallButton" Grid.Row="1" Style="{StaticResource ActionButton}" Background="{StaticResource BlueBrush}" Margin="0,14,0,0" Click="Recall_Click">
                             <TextBlock Text="Recall patient" FontSize="25" FontWeight="Black" TextAlignment="Center" />
                         </Button>
-                        <Button x:Name="CompleteButton" Grid.Row="2" Style="{StaticResource ActionButton}" Background="{StaticResource GreenBrush}" Margin="0,14,0,0" Click="Complete_Click">
+                        <Button x:Name="CompleteButton" Grid.Row="2" Style="{StaticResource ActionButton}" Background="{StaticResource BrightBlueBrush}" Margin="0,14,0,0" Click="Complete_Click">
                             <TextBlock Text="Complete and call next" FontSize="25" FontWeight="Black" TextAlignment="Center" />
                         </Button>
                     </Grid>
