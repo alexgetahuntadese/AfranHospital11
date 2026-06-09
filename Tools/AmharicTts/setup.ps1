@@ -15,7 +15,7 @@ if (-not (Test-Path $pythonExe)) {
 }
 
 & $pythonExe -m pip install --upgrade pip
-& $pythonExe -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+& $pythonExe -m pip install --index-url https://download.pytorch.org/whl/cpu --force-reinstall "torch==2.3.1+cpu"
 & $pythonExe -m pip install "transformers==4.41.2" "huggingface-hub==0.23.5" accelerate scipy safetensors
 
 New-Item -ItemType Directory -Force -Path $modelDir | Out-Null
