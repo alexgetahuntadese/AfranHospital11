@@ -4,6 +4,7 @@ import argparse
 import os
 from pathlib import Path
 
+import numpy
 import scipy.io.wavfile
 import torch
 from transformers import AutoTokenizer, VitsModel
@@ -34,9 +35,12 @@ def main() -> None:
     with torch.no_grad():
         waveform = model(**inputs).waveform.squeeze().cpu().numpy()
 
+    waveform = waveform / max(0.01, numpy.max(numpy.abs(waveform)))
+    pcm_waveform = (waveform * 32767).astype(numpy.int16)
+
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    scipy.io.wavfile.write(output, rate=model.config.sampling_rate, data=waveform)
+    scipy.io.wavfile.write(output, rate=model.config.sampling_rate, data=pcm_waveform)
 
 
 if __name__ == "__main__":

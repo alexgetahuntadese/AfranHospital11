@@ -37,7 +37,7 @@ public sealed partial class AmharicTicketAnnouncer
         {
             var safeTicket = SafeFilePart(ticket);
             var outputPath = Path.Combine(_audioDir, $"{safeTicket}.wav");
-            if (!File.Exists(outputPath))
+            if (!IsPcmWave(outputPath))
             {
                 await GenerateAudioAsync(ticket, outputPath);
             }
@@ -83,7 +83,7 @@ public sealed partial class AmharicTicketAnnouncer
         process.Start();
         await process.WaitForExitAsync();
 
-        if (process.ExitCode != 0 || !File.Exists(outputPath))
+        if (process.ExitCode != 0 || !IsPcmWave(outputPath))
         {
             throw new InvalidOperationException("Amharic TTS generation failed.");
         }
@@ -168,11 +168,7 @@ public sealed partial class AmharicTicketAnnouncer
 
     private static string FindVoiceRoot()
     {
-        var candidates = new[]
-        {
-            Path.Combine(AppContext.BaseDirectory, "Tools", "AmharicTts"),
-            Path.Combine(Environment.CurrentDirectory, "Tools", "AmharicTts")
-        };
+        var candidates = FindCandidateRoots().ToList();
 
         var readyPath = candidates.FirstOrDefault(path =>
             File.Exists(Path.Combine(path, ".venv", "Scripts", "python.exe"))
@@ -183,8 +179,22 @@ public sealed partial class AmharicTicketAnnouncer
         }
 
         return candidates.FirstOrDefault(path => File.Exists(Path.Combine(path, "synthesize_ticket.py")))
-            ?? candidates[0];
+            ?? Path.Combine(AppContext.BaseDirectory, "Tools", "AmharicTts");
     }
+
+    private static IEnumerable<string> FindCandidateRoots()
+    {
+        foreach (var basePath in new[] { AppContext.BaseDirectory, Environment.CurrentDirectory })
+        {
+            var directory = new DirectoryInfo(basePath);
+            while (directory is not null)
+            {
+                yield return Path.Combine(directory.FullName, "Tools", "AmharicTts");
+                directory = directory.Parent;
+            }
+        }
+    }
+
 
     private static string SafeFilePart(string value)
     {
@@ -194,6 +204,44 @@ public sealed partial class AmharicTicketAnnouncer
         }
 
         return value;
+    }
+
+    private static bool IsPcmWave(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return false;
+        }
+
+        using var stream = File.OpenRead(path);
+        using var reader = new BinaryReader(stream);
+
+        if (stream.Length < 44
+            || new string(reader.ReadChars(4)) != "RIFF")
+        {
+            return false;
+        }
+
+        stream.Position = 8;
+        if (new string(reader.ReadChars(4)) != "WAVE")
+        {
+            return false;
+        }
+
+        while (stream.Position + 8 <= stream.Length)
+        {
+            var chunkId = new string(reader.ReadChars(4));
+            var chunkSize = reader.ReadInt32();
+            if (chunkId == "fmt ")
+            {
+                var audioFormat = reader.ReadInt16();
+                return audioFormat == 1;
+            }
+
+            stream.Position += chunkSize;
+        }
+
+        return false;
     }
 
     [GeneratedRegex("^(?<prefix>[A-Za-z]+)(?<number>\\d+)$")]

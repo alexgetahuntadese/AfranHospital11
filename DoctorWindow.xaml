@@ -8,8 +8,8 @@
         MinHeight="700"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
-        WindowStyle="None"
-        ResizeMode="NoResize"
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="CanResize"
         Background="#F3FAFB"
         FontFamily="Segoe UI"
         KeyDown="Window_KeyDown">
