@@ -1,16 +1,21 @@
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Media;
 
 namespace AfranHospitalKiosk;
 
 public sealed class AmharicTicketAnnouncer
 {
+    private const int RepeatCount = 2;
+    private static readonly TimeSpan RepeatDelay = TimeSpan.FromMilliseconds(350);
     private readonly SemaphoreSlim _speechLock = new(1, 1);
     private readonly string _voiceRoot;
+    private readonly Dictionary<string, string> _ticketVoices;
 
     public AmharicTicketAnnouncer()
     {
         _voiceRoot = FindVoiceRoot();
+        _ticketVoices = LoadTicketVoices(_voiceRoot);
     }
 
     public bool IsReady => Directory.Exists(_voiceRoot);
@@ -26,10 +31,21 @@ public sealed class AmharicTicketAnnouncer
         await _speechLock.WaitAsync();
         try
         {
-            await Task.Run(() =>
+            for (var repeat = 0; repeat < RepeatCount; repeat++)
             {
-                PlayAudioFile(audioPath);
-            });
+                await PlayAudioFileAsync(audioPath);
+                if (repeat + 1 < RepeatCount)
+                {
+                    await Task.Delay(RepeatDelay);
+                    var repeatAudio = FindRepeatAudio(ticket);
+                    if (repeatAudio is not null)
+                    {
+                        await PlayAudioFileAsync(repeatAudio);
+                    }
+
+                    await Task.Delay(RepeatDelay);
+                }
+            }
         }
         catch
         {
@@ -59,6 +75,25 @@ public sealed class AmharicTicketAnnouncer
         }
 
         return null;
+    }
+
+    private string? FindRepeatAudio(string? ticket)
+    {
+        var voice = "female";
+        if (!string.IsNullOrWhiteSpace(ticket)
+            && _ticketVoices.TryGetValue(ticket.Trim().ToUpperInvariant(), out var manifestVoice))
+        {
+            voice = manifestVoice;
+        }
+
+        var preferred = Path.Combine(_voiceRoot, $"repeat-{voice}.mp3");
+        if (File.Exists(preferred))
+        {
+            return preferred;
+        }
+
+        var fallback = Path.Combine(_voiceRoot, "repeat-female.mp3");
+        return File.Exists(fallback) ? fallback : null;
     }
 
     private static string FindVoiceRoot()
@@ -97,33 +132,76 @@ public sealed class AmharicTicketAnnouncer
         return value;
     }
 
-    private static void PlayAudioFile(string path)
+    private static Dictionary<string, string> LoadTicketVoices(string voiceRoot)
     {
-        var alias = $"ticket_{Guid.NewGuid():N}";
-        var mediaType = Path.GetExtension(path).Equals(".wav", StringComparison.OrdinalIgnoreCase)
-            ? "waveaudio"
-            : "mpegvideo";
-        var openCommand = $"open \"{path}\" type {mediaType} alias {alias}";
-        try
+        var manifestPath = Path.Combine(voiceRoot, "random-voices-both-001-999.txt");
+        var voices = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        if (!File.Exists(manifestPath))
         {
-            SendMciCommand(openCommand);
-            SendMciCommand($"play {alias} wait");
+            return voices;
         }
-        finally
+
+        foreach (var line in File.ReadLines(manifestPath))
         {
-            _ = mciSendString($"close {alias}", null, 0, IntPtr.Zero);
+            var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (parts.Length == 2)
+            {
+                voices[parts[0]] = parts[1].Equals("male", StringComparison.OrdinalIgnoreCase)
+                    ? "male"
+                    : "female";
+            }
         }
+
+        return voices;
     }
 
-    private static void SendMciCommand(string command)
+    private static Task PlayAudioFileAsync(string path)
     {
-        var error = mciSendString(command, null, 0, IntPtr.Zero);
-        if (error != 0)
+        var dispatcher = Application.Current?.Dispatcher;
+        if (dispatcher is null)
         {
-            throw new InvalidOperationException($"Audio playback failed: {error}");
+            return Task.CompletedTask;
         }
-    }
 
-    [DllImport("winmm.dll", CharSet = CharSet.Unicode)]
-    private static extern int mciSendString(string command, string? returnValue, int returnLength, IntPtr callback);
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        dispatcher.Invoke(() =>
+        {
+            var player = new MediaPlayer();
+            var timeout = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(30)
+            };
+
+            void ClosePlayer()
+            {
+                timeout.Stop();
+                player.Close();
+            }
+
+            timeout.Tick += (_, _) =>
+            {
+                ClosePlayer();
+                completion.TrySetResult();
+            };
+
+            player.MediaEnded += (_, _) =>
+            {
+                ClosePlayer();
+                completion.TrySetResult();
+            };
+
+            player.MediaFailed += (_, _) =>
+            {
+                ClosePlayer();
+                completion.TrySetResult();
+            };
+
+            player.Open(new Uri(path, UriKind.Absolute));
+            player.Volume = 1.0;
+            timeout.Start();
+            player.Play();
+        });
+
+        return completion.Task;
+    }
 }

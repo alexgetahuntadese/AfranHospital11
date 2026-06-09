@@ -9,6 +9,7 @@ public partial class DoctorWindow : Window
 {
     private readonly DispatcherTimer _clockTimer = new() { Interval = TimeSpan.FromSeconds(1) };
     private readonly QueueApiClient _apiClient = new();
+    private readonly AmharicTicketAnnouncer _announcer = new();
     private int _fallbackTicket = 105;
     private bool _isBusy;
 
@@ -105,7 +106,12 @@ public partial class DoctorWindow : Window
         {
             var ticket = await _apiClient.CallNextAsync();
             NowCallingLabel.Text = ticket ?? "-";
-            RoomLabel.Text = ticket is null ? "No waiting patients." : "Doctor Room 3";
+            RoomLabel.Text = ticket is null ? "No waiting tickets." : "Doctor Room 3";
+            if (ticket is not null)
+            {
+                _ = _announcer.AnnounceAsync(ticket);
+            }
+
             await RefreshDisplayAsync();
         }
         catch
@@ -140,6 +146,10 @@ public partial class DoctorWindow : Window
             RoomLabel.Text = recalled is null
                 ? "No called ticket to recall."
                 : $"Recalling {recalled}.";
+            if (recalled is not null)
+            {
+                _ = _announcer.AnnounceAsync(recalled);
+            }
         }
         catch
         {
@@ -165,6 +175,11 @@ public partial class DoctorWindow : Window
                 : completed is not null
                     ? $"Completed {completed}. No waiting tickets."
                     : "No called ticket to complete.";
+            if (next is not null)
+            {
+                _ = _announcer.AnnounceAsync(next);
+            }
+
             await RefreshDisplayAsync();
         }
         catch

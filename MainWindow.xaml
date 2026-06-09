@@ -22,8 +22,8 @@
         <SolidColorBrush x:Key="GoldBrush" Color="#D8A531" />
 
         <Style x:Key="WizardButton" TargetType="Button">
-            <Setter Property="MinHeight" Value="174" />
-            <Setter Property="Padding" Value="28" />
+            <Setter Property="MinHeight" Value="154" />
+            <Setter Property="Padding" Value="24" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Background">
                 <Setter.Value>
@@ -48,10 +48,10 @@
             </Setter>
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect BlurRadius="24"
-                                      ShadowDepth="14"
+                    <DropShadowEffect BlurRadius="16"
+                                      ShadowDepth="8"
                                       Direction="270"
-                                      Opacity="0.42"
+                                      Opacity="0.26"
                                       Color="#050707" />
                 </Setter.Value>
             </Setter>
@@ -138,8 +138,8 @@
         </Style>
 
         <Style x:Key="SmallButton" TargetType="Button" BasedOn="{StaticResource WizardButton}">
-            <Setter Property="MinHeight" Value="74" />
-            <Setter Property="Padding" Value="22,14" />
+            <Setter Property="MinHeight" Value="62" />
+            <Setter Property="Padding" Value="18,10" />
         </Style>
 
         <Style x:Key="RaisedPanel" TargetType="Border">
@@ -155,10 +155,10 @@
             </Setter>
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect BlurRadius="34"
-                                      ShadowDepth="18"
+                    <DropShadowEffect BlurRadius="18"
+                                      ShadowDepth="9"
                                       Direction="270"
-                                      Opacity="0.50"
+                                      Opacity="0.28"
                                       Color="#050707" />
                 </Setter.Value>
             </Setter>
@@ -170,16 +170,16 @@
         </Style>
 
         <Style x:Key="StepDot" TargetType="Border">
-            <Setter Property="Width" Value="46" />
-            <Setter Property="Height" Value="46" />
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="34" />
             <Setter Property="CornerRadius" Value="8" />
             <Setter Property="Background" Value="#18372F" />
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect BlurRadius="18"
-                                      ShadowDepth="8"
+                    <DropShadowEffect BlurRadius="10"
+                                      ShadowDepth="4"
                                       Direction="270"
-                                      Opacity="0.32"
+                                      Opacity="0.24"
                                       Color="#050707" />
                 </Setter.Value>
             </Setter>
@@ -204,8 +204,8 @@
                 BorderBrush="#D8A531"
                 BorderThickness="1"
                 CornerRadius="8"
-                Padding="28"
-                Margin="32">
+                Padding="24"
+                Margin="28">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -224,15 +224,15 @@
                             Style="{StaticResource RaisedPanel}"
                             Background="#FFFDF7"
                             CornerRadius="8"
-                            Padding="14,10"
-                            Width="500"
+                            Padding="12,8"
+                            Width="320"
                             HorizontalAlignment="Left">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Image Source="Assets/afranlogo.png"
-                                   Height="62"
+                                   Height="46"
                                    Stretch="Uniform"
                                    RenderOptions.BitmapScalingMode="HighQuality"
                                    HorizontalAlignment="Left" />
@@ -243,7 +243,7 @@
                                Grid.Column="1"
                                Text="Registration kiosk"
                                Foreground="#F1D58A"
-                               FontSize="16"
+                               FontSize="18"
                                FontWeight="SemiBold"
                                Margin="18,0,18,0"
                                VerticalAlignment="Center" />
@@ -252,7 +252,7 @@
                         <TextBlock x:Name="ClockLabel"
                                    Text="00:00"
                                    Foreground="#FFFDF7"
-                                   FontSize="34"
+                                   FontSize="30"
                                    FontWeight="Black"
                                    HorizontalAlignment="Right" />
                         <TextBlock x:Name="DateLabel"
@@ -264,7 +264,7 @@
                     </StackPanel>
                 </Grid>
 
-                <Grid Grid.Row="1" Margin="0,24,0,22">
+                <Grid Grid.Row="1" Margin="0,18,0,16">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -280,19 +280,19 @@
                         </Grid.ColumnDefinitions>
 
                         <Border x:Name="LanguageDot" Style="{StaticResource StepDot}" Background="#D8A531">
-                            <TextBlock Text="1" Foreground="#10251F" FontSize="21" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="1" Foreground="#10251F" FontSize="17" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
-                        <Border Grid.Column="1" Style="{StaticResource RaisedPanel}" Height="5" Background="#D8A531" VerticalAlignment="Center" Margin="14,0" />
+                        <Border Grid.Column="1" Height="3" Background="#D8A531" VerticalAlignment="Center" Margin="12,0" Opacity="0.85" />
                         <Border x:Name="GenderDot" Grid.Column="2" Style="{StaticResource StepDot}">
-                            <TextBlock Text="2" Foreground="#FFFDF7" FontSize="21" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="2" Foreground="#FFFDF7" FontSize="17" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
-                        <Border Grid.Column="3" Style="{StaticResource RaisedPanel}" Height="5" Background="#D8A531" VerticalAlignment="Center" Margin="14,0" />
+                        <Border Grid.Column="3" Height="3" Background="#D8A531" VerticalAlignment="Center" Margin="12,0" Opacity="0.85" />
                         <Border x:Name="PrintDot" Grid.Column="4" Style="{StaticResource StepDot}">
-                            <TextBlock Text="3" Foreground="#FFFDF7" FontSize="21" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="3" Foreground="#FFFDF7" FontSize="17" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Grid>
 
-                    <Grid Grid.Row="1" Margin="0,24,0,0">
+                    <Grid Grid.Row="1" Margin="0,18,0,0">
                         <Grid x:Name="LanguagePanel">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -303,23 +303,23 @@
                                 <TextBlock x:Name="StepLabel"
                                            Text="STEP 1 / 2"
                                            Foreground="#F1D58A"
-                                           FontSize="16"
+                                           FontSize="14"
                                            FontWeight="Black" />
                                 <TextBlock x:Name="TitleLabel"
                                            Text="ቋንቋ ይምረጡ / Afaan filadhu"
                                            Foreground="#FFFDF7"
-                                           FontSize="46"
+                                           FontSize="40"
                                            FontWeight="Black"
                                            Margin="0,6,0,0" />
                                 <TextBlock x:Name="HelperLabel"
                                            Text="አማርኛ ወይም Afaan Oromoo ይምረጡ።"
                                            Foreground="#DDF4E6"
-                                           FontSize="19"
+                                           FontSize="17"
                                            FontWeight="SemiBold"
                                            Margin="0,4,0,0" />
                             </StackPanel>
 
-                            <Grid Grid.Row="1" Margin="0,24,0,0">
+                            <Grid Grid.Row="1" Margin="0,20,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
@@ -327,25 +327,25 @@
 
                                 <Button Grid.Column="0"
                                         Style="{StaticResource WizardButton}"
-                                        Margin="0,0,16,0"
+                                        Margin="0,0,12,0"
                                         Tag="Amharic"
                                         Click="LanguageButton_Click">
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="AMRC" Foreground="#D8A531" FontSize="22" FontWeight="Black" />
-                                        <TextBlock Text="አማርኛ" Foreground="#10251F" FontSize="46" FontWeight="Black" Margin="0,10,0,2" />
-                                        <TextBlock Text="በአማርኛ ይቀጥሉ" Foreground="#5F6F64" FontSize="18" />
+                                        <TextBlock Text="AMRC" Foreground="#D8A531" FontSize="18" FontWeight="Black" />
+                                        <TextBlock Text="አማርኛ" Foreground="#10251F" FontSize="38" FontWeight="Black" Margin="0,8,0,2" />
+                                        <TextBlock Text="በአማርኛ ይቀጥሉ" Foreground="#5F6F64" FontSize="16" />
                                     </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="1"
                                         Style="{StaticResource WizardButton}"
-                                        Margin="16,0,0,0"
+                                        Margin="12,0,0,0"
                                         Tag="Oromo"
                                         Click="LanguageButton_Click">
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="OROMO" Foreground="#D8A531" FontSize="22" FontWeight="Black" />
-                                        <TextBlock Text="Afaan Oromoo" Foreground="#10251F" FontSize="46" FontWeight="Black" Margin="0,10,0,2" />
-                                        <TextBlock Text="Afaan Oromootiin itti fufi" Foreground="#5F6F64" FontSize="18" />
+                                        <TextBlock Text="OROMO" Foreground="#D8A531" FontSize="18" FontWeight="Black" />
+                                        <TextBlock Text="Afaan Oromoo" Foreground="#10251F" FontSize="38" FontWeight="Black" Margin="0,8,0,2" TextWrapping="Wrap" />
+                                        <TextBlock Text="Afaan Oromootiin itti fufi" Foreground="#5F6F64" FontSize="16" />
                                     </StackPanel>
                                 </Button>
                             </Grid>
@@ -361,23 +361,23 @@
                                 <TextBlock x:Name="GenderStepLabel"
                                            Text="STEP 2 / 2"
                                            Foreground="#F1D58A"
-                                           FontSize="16"
+                                           FontSize="14"
                                            FontWeight="Black" />
                                 <TextBlock x:Name="GenderTitleLabel"
                                            Text="Choose gender"
                                            Foreground="#FFFDF7"
-                                           FontSize="50"
+                                           FontSize="42"
                                            FontWeight="Black"
                                            Margin="0,6,0,0" />
                                 <TextBlock x:Name="GenderHelperLabel"
                                            Text="Ticket prints automatically after selection."
                                            Foreground="#DDF4E6"
-                                           FontSize="19"
+                                           FontSize="17"
                                            FontWeight="SemiBold"
                                            Margin="0,4,0,0" />
                             </StackPanel>
 
-                            <Grid Grid.Row="1" Margin="0,24,0,0">
+                            <Grid Grid.Row="1" Margin="0,20,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
@@ -385,25 +385,25 @@
 
                                 <Button Grid.Column="0"
                                         Style="{StaticResource WizardButton}"
-                                        Margin="0,0,16,0"
+                                        Margin="0,0,12,0"
                                         Tag="Female"
                                         Click="GenderButton_Click">
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock x:Name="FemaleCodeLabel" Text="F" Foreground="#D8A531" FontSize="28" FontWeight="Black" />
-                                        <TextBlock x:Name="FemaleLabel" Text="Female" Foreground="#10251F" FontSize="48" FontWeight="Black" Margin="0,10,0,2" />
-                                        <TextBlock x:Name="FemaleHintLabel" Text="Print female registration ticket" Foreground="#5F6F64" FontSize="18" TextWrapping="Wrap" />
+                                        <TextBlock x:Name="FemaleCodeLabel" Text="F" Foreground="#D8A531" FontSize="22" FontWeight="Black" />
+                                        <TextBlock x:Name="FemaleLabel" Text="Female" Foreground="#10251F" FontSize="40" FontWeight="Black" Margin="0,8,0,2" />
+                                        <TextBlock x:Name="FemaleHintLabel" Text="Print female registration ticket" Foreground="#5F6F64" FontSize="16" TextWrapping="Wrap" />
                                     </StackPanel>
                                 </Button>
 
                                 <Button Grid.Column="1"
                                         Style="{StaticResource WizardButton}"
-                                        Margin="16,0,0,0"
+                                        Margin="12,0,0,0"
                                         Tag="Male"
                                         Click="GenderButton_Click">
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock x:Name="MaleCodeLabel" Text="M" Foreground="#D8A531" FontSize="28" FontWeight="Black" />
-                                        <TextBlock x:Name="MaleLabel" Text="Male" Foreground="#10251F" FontSize="48" FontWeight="Black" Margin="0,10,0,2" />
-                                        <TextBlock x:Name="MaleHintLabel" Text="Print male registration ticket" Foreground="#5F6F64" FontSize="18" TextWrapping="Wrap" />
+                                        <TextBlock x:Name="MaleCodeLabel" Text="M" Foreground="#D8A531" FontSize="22" FontWeight="Black" />
+                                        <TextBlock x:Name="MaleLabel" Text="Male" Foreground="#10251F" FontSize="40" FontWeight="Black" Margin="0,8,0,2" />
+                                        <TextBlock x:Name="MaleHintLabel" Text="Print male registration ticket" Foreground="#5F6F64" FontSize="16" TextWrapping="Wrap" />
                                     </StackPanel>
                                 </Button>
                             </Grid>
@@ -413,17 +413,17 @@
                             <Border Style="{StaticResource RaisedPanel}"
                                     Background="#FFFDF7"
                                     CornerRadius="8"
-                                    Padding="30"
+                                    Padding="26"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Width="640">
+                                    Width="560">
                                 <StackPanel>
-                                    <Border Width="88"
-                                            Height="88"
+                                    <Border Width="72"
+                                            Height="72"
                                             CornerRadius="8"
                                             Background="#D8A531"
                                             HorizontalAlignment="Center"
-                                            Margin="0,0,0,18"
+                                            Margin="0,0,0,14"
                                             RenderTransformOrigin="0.5,0.5">
                                         <Border.RenderTransform>
                                             <TransformGroup>
@@ -434,7 +434,7 @@
                                         </Border.RenderTransform>
                                         <TextBlock Text="✓"
                                                    Foreground="#10251F"
-                                                   FontSize="54"
+                                                   FontSize="44"
                                                    FontWeight="Black"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Center" />
@@ -442,13 +442,13 @@
                                     <TextBlock x:Name="PrintingTitleLabel"
                                                Text="Thank you"
                                                Foreground="#10251F"
-                                               FontSize="40"
+                                               FontSize="34"
                                                FontWeight="Black"
                                                TextAlignment="Center" />
                                     <TextBlock x:Name="TicketLabel"
                                                Text="REG-105"
                                                Foreground="#0D6B4F"
-                                               FontSize="62"
+                                               FontSize="54"
                                                FontWeight="Black"
                                                Margin="0,12,0,0"
                                                TextAlignment="Center" />
@@ -456,12 +456,12 @@
                                             BorderBrush="#D8A531"
                                             BorderThickness="1"
                                             CornerRadius="8"
-                                            Padding="18"
-                                            Margin="0,18,0,0">
+                                            Padding="16"
+                                            Margin="0,16,0,0">
                                         <TextBlock x:Name="PrintingWowLabel"
                                                    Text="Your registration ticket is ready."
                                                    Foreground="#10251F"
-                                                   FontSize="24"
+                                                   FontSize="21"
                                                    FontWeight="Black"
                                                    TextAlignment="Center"
                                                    TextWrapping="Wrap" />
@@ -469,7 +469,7 @@
                                     <TextBlock x:Name="PrintingHelperLabel"
                                                Text="Please take your ticket."
                                                Foreground="#5F6F64"
-                                               FontSize="21"
+                                               FontSize="18"
                                                FontWeight="SemiBold"
                                                TextAlignment="Center"
                                                TextWrapping="Wrap"
@@ -490,32 +490,32 @@
                     <Button x:Name="BackButton"
                             Grid.Column="0"
                             Style="{StaticResource SmallButton}"
-                            Width="170"
+                            Width="140"
                             Click="BackButton_Click">
-                        <TextBlock x:Name="BackButtonLabel" Text="Back" FontSize="22" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock x:Name="BackButtonLabel" Text="Back" FontSize="19" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
 
                     <Border Grid.Column="1"
-                            Style="{StaticResource RaisedPanel}"
                             Background="#0A3F32"
                             CornerRadius="8"
-                            Padding="20"
-                            Margin="18,0">
+                            Padding="16"
+                            Margin="14,0">
                         <TextBlock x:Name="StatusLabel"
                                    Text="Ready for registration."
                                    Foreground="#FFFDF7"
-                                   FontSize="20"
+                                   FontSize="18"
                                    FontWeight="SemiBold"
                                    HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap" />
                     </Border>
 
                     <Button Grid.Column="2"
                             Style="{StaticResource SmallButton}"
                             Background="#D8A531"
-                            Width="170"
+                            Width="140"
                             Click="ResetButton_Click">
-                        <TextBlock x:Name="NewButtonLabel" Text="New" Foreground="#10251F" FontSize="22" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock x:Name="NewButtonLabel" Text="New" Foreground="#10251F" FontSize="19" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </Grid>
             </Grid>

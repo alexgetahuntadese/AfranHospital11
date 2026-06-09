@@ -94,10 +94,12 @@ Assets\Voices\Amharic\F023.mp3
 When the doctor screen calls or recalls a ticket, the TV screen plays the
 matching WAV or MP3 file if it exists.
 
-To generate online Amharic samples with one male and one female voice:
+To generate online Amharic ticket audio for every `M001-M999` and `F001-F999`
+file, with the speaking voice randomly chosen male or female independent of the
+ticket prefix:
 
 ```powershell
-.\Tools\VoiceSampleGenerator\Scripts\python.exe .\Tools\VoiceSampleGenerator\generate_amharic_ticket_audio.py --start 1 --end 999 --prefix both
+.\Tools\VoiceSampleGenerator\Scripts\python.exe .\Tools\VoiceSampleGenerator\generate_amharic_ticket_audio.py --start 1 --end 999 --prefix both --room 101 --voice-mode random --force
 ```
 
 The generated sentence format is:

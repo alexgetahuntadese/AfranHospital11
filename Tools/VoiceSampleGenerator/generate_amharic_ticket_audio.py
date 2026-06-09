@@ -10,6 +10,10 @@ import edge_tts
 
 MALE_VOICE = "am-ET-AmehaNeural"
 FEMALE_VOICE = "am-ET-MekdesNeural"
+VOICE_NAMES = {
+    MALE_VOICE: "male",
+    FEMALE_VOICE: "female",
+}
 
 ONES = {
     0: "ዜሮ",
@@ -60,12 +64,12 @@ def ticket_text(prefix: str, number: int, room: str) -> str:
     return f"ቁጥር {letter} {ticket_number_words(number)}፣ ወደ ሐኪም ክፍል {room} ይሂዱ።"
 
 
-async def generate_one(prefix: str, number: int, room: str, output_dir: Path, force: bool) -> None:
+async def generate_one(prefix: str, number: int, room: str, output_dir: Path, force: bool, voice: str | None = None) -> None:
     output = output_dir / f"{prefix}{number:03}.mp3"
     if output.exists() and not force:
         return
 
-    voice = MALE_VOICE if prefix == "M" else FEMALE_VOICE
+    voice = voice or (MALE_VOICE if prefix == "M" else FEMALE_VOICE)
     communicate = edge_tts.Communicate(ticket_text(prefix, number, room), voice)
     await communicate.save(str(output))
 
@@ -79,6 +83,12 @@ async def main() -> None:
     parser.add_argument("--room", default="101", help="Doctor room number spoken in the sentence.")
     parser.add_argument("--concurrency", type=int, default=6, help="Parallel online TTS requests.")
     parser.add_argument("--seed", type=int, default=None, help="Optional seed for repeatable random prefix selection.")
+    parser.add_argument(
+        "--voice-mode",
+        choices=["prefix", "random"],
+        default="prefix",
+        help="Use prefix-matched voices or randomly choose male/female voice for each ticket.",
+    )
     parser.add_argument("--force", action="store_true", help="Regenerate existing files.")
     args = parser.parse_args()
 
@@ -109,16 +119,33 @@ async def main() -> None:
             for number in range(args.start, args.end + 1)
         ]
 
+    voice_jobs = [
+        (prefix, number, rng.choice([MALE_VOICE, FEMALE_VOICE]) if args.voice_mode == "random" else None)
+        for prefix, number in ticket_jobs
+    ]
+
+    if args.voice_mode == "random":
+        manifest = output_dir / f"random-voices-{args.prefix}-{args.start:03}-{args.end:03}.txt"
+        manifest.write_text(
+            "\n".join(
+                f"{prefix}{number:03} {VOICE_NAMES[voice or (MALE_VOICE if prefix == 'M' else FEMALE_VOICE)]}"
+                for prefix, number, voice in voice_jobs
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        print(f"voice manifest {manifest}")
+
     semaphore = asyncio.Semaphore(args.concurrency)
 
-    async def guarded(prefix: str, number: int) -> None:
+    async def guarded(prefix: str, number: int, voice: str | None) -> None:
         async with semaphore:
-            await generate_one(prefix, number, args.room, output_dir, args.force)
+            await generate_one(prefix, number, args.room, output_dir, args.force, voice)
             print(f"generated {prefix}{number:03}")
 
     tasks = [
-        guarded(prefix, number)
-        for prefix, number in ticket_jobs
+        guarded(prefix, number, voice)
+        for prefix, number, voice in voice_jobs
     ]
     await asyncio.gather(*tasks)
 

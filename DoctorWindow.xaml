@@ -98,7 +98,7 @@
                     <StackPanel Grid.Column="1" Margin="26,0,0,0" VerticalAlignment="Center">
                         <TextBlock Text="Doctor station" Foreground="{StaticResource AccentBlueBrush}" FontSize="18" FontWeight="Black" />
                         <TextBlock Text="Clinical consultation queue" Foreground="{StaticResource InkBrush}" FontSize="36" FontWeight="Black" />
-                        <TextBlock Text="Review patients, recall tickets, and keep the clinic flow moving." Foreground="{StaticResource MutedBrush}" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock Text="Call ticket numbers, recall tickets, and keep the clinic flow moving." Foreground="{StaticResource MutedBrush}" FontSize="16" FontWeight="SemiBold" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" VerticalAlignment="Center">
@@ -128,8 +128,8 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel>
-                                <TextBlock Text="Waiting patients" Foreground="{StaticResource InkBrush}" FontSize="36" FontWeight="Black" />
-                                <TextBlock Text="Patients ready for doctor consultation" Foreground="{StaticResource MutedBrush}" FontSize="17" FontWeight="SemiBold" />
+                                <TextBlock Text="Waiting tickets" Foreground="{StaticResource InkBrush}" FontSize="36" FontWeight="Black" />
+                                <TextBlock Text="Ticket numbers ready for doctor consultation" Foreground="{StaticResource MutedBrush}" FontSize="17" FontWeight="SemiBold" />
                             </StackPanel>
                             <Border Grid.Column="1" Background="#EAF3FF" BorderBrush="#B8D9F8" BorderThickness="1" CornerRadius="8" Padding="16,10" VerticalAlignment="Center">
                                 <TextBlock Text="ROOM 3" Foreground="{StaticResource AccentBlueBrush}" FontSize="18" FontWeight="Black" />
@@ -195,18 +195,18 @@
 
                             <StackPanel>
                                 <TextBlock Text="NOW CALLING" Foreground="{StaticResource AccentBlueBrush}" FontSize="17" FontWeight="Black" />
-                                <TextBlock Text="Current patient for consultation" Foreground="{StaticResource MutedBrush}" FontSize="16" FontWeight="SemiBold" Margin="0,4,0,0" />
+                                <TextBlock Text="Current ticket number for consultation" Foreground="{StaticResource MutedBrush}" FontSize="16" FontWeight="SemiBold" Margin="0,4,0,0" />
                             </StackPanel>
 
                             <Border Grid.Row="1" Background="#F0F7FF" BorderBrush="#B8D9F8" BorderThickness="1" CornerRadius="8" Padding="24" Margin="0,22,0,22">
                                 <StackPanel VerticalAlignment="Center">
-                                    <TextBlock x:Name="NowCallingLabel" Text="REG-105" Foreground="{StaticResource BrightBlueBrush}" FontSize="82" FontWeight="Black" HorizontalAlignment="Center" />
+                                    <TextBlock x:Name="NowCallingLabel" Text="-" Foreground="{StaticResource BrightBlueBrush}" FontSize="82" FontWeight="Black" HorizontalAlignment="Center" />
                                     <TextBlock x:Name="RoomLabel" Text="Doctor Room 3" Foreground="{StaticResource InkBrush}" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center" />
                                 </StackPanel>
                             </Border>
 
                             <Border Grid.Row="2" Background="#E3F0FF" BorderBrush="#B8D9F8" BorderThickness="1" CornerRadius="8" Padding="18">
-                                <TextBlock Text="Ready for doctor review" Foreground="{StaticResource BlueBrush}" FontSize="22" FontWeight="Black" TextAlignment="Center" />
+                                <TextBlock Text="Ready for doctor review by ticket number" Foreground="{StaticResource BlueBrush}" FontSize="22" FontWeight="Black" TextAlignment="Center" />
                             </Border>
                         </Grid>
                     </Border>
@@ -218,10 +218,10 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Button x:Name="CallNextButton" Style="{StaticResource ActionButton}" Click="CallNext_Click">
-                            <TextBlock Text="Call next patient" FontSize="25" FontWeight="Black" TextAlignment="Center" />
+                            <TextBlock Text="Call next ticket" FontSize="25" FontWeight="Black" TextAlignment="Center" />
                         </Button>
                         <Button x:Name="RecallButton" Grid.Row="1" Style="{StaticResource ActionButton}" Background="{StaticResource BlueBrush}" Margin="0,14,0,0" Click="Recall_Click">
-                            <TextBlock Text="Recall patient" FontSize="25" FontWeight="Black" TextAlignment="Center" />
+                            <TextBlock Text="Recall ticket" FontSize="25" FontWeight="Black" TextAlignment="Center" />
                         </Button>
                         <Button x:Name="CompleteButton" Grid.Row="2" Style="{StaticResource ActionButton}" Background="{StaticResource BrightBlueBrush}" Margin="0,14,0,0" Click="Complete_Click">
                             <TextBlock Text="Complete and call next" FontSize="25" FontWeight="Black" TextAlignment="Center" />
