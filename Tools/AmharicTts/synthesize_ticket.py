@@ -20,13 +20,14 @@ def main() -> None:
     parser.add_argument("--offline", action="store_true", help="Use only already downloaded model files.")
     args = parser.parse_args()
 
+    cache_dir = None
     if args.model_dir:
         model_dir = Path(args.model_dir).resolve()
-        os.environ.setdefault("HF_HOME", str(model_dir / "hf-cache"))
-        os.environ.setdefault("TRANSFORMERS_CACHE", str(model_dir / "hf-cache"))
+        cache_dir = str(model_dir / "hf-cache")
+        os.environ.setdefault("HF_HOME", cache_dir)
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, local_files_only=args.offline)
-    model = VitsModel.from_pretrained(MODEL_ID, local_files_only=args.offline)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, cache_dir=cache_dir, local_files_only=args.offline)
+    model = VitsModel.from_pretrained(MODEL_ID, cache_dir=cache_dir, local_files_only=args.offline)
     model.eval()
 
     inputs = tokenizer(args.text, return_tensors="pt")

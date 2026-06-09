@@ -20,7 +20,6 @@ if (-not (Test-Path $pythonExe)) {
 
 New-Item -ItemType Directory -Force -Path $modelDir | Out-Null
 $env:HF_HOME = Join-Path $modelDir "hf-cache"
-$env:TRANSFORMERS_CACHE = $env:HF_HOME
 
 $sample = Join-Path $root "sample.wav"
 & $pythonExe (Join-Path $root "synthesize_ticket.py") `

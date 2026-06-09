@@ -43,7 +43,7 @@ public sealed partial class AmharicTicketAnnouncer
             }
 
             using var player = new SoundPlayer(outputPath);
-            player.Play();
+            player.PlaySync();
         }
         catch
         {
@@ -173,6 +173,14 @@ public sealed partial class AmharicTicketAnnouncer
             Path.Combine(AppContext.BaseDirectory, "Tools", "AmharicTts"),
             Path.Combine(Environment.CurrentDirectory, "Tools", "AmharicTts")
         };
+
+        var readyPath = candidates.FirstOrDefault(path =>
+            File.Exists(Path.Combine(path, ".venv", "Scripts", "python.exe"))
+            && File.Exists(Path.Combine(path, "synthesize_ticket.py")));
+        if (readyPath is not null)
+        {
+            return readyPath;
+        }
 
         return candidates.FirstOrDefault(path => File.Exists(Path.Combine(path, "synthesize_ticket.py")))
             ?? candidates[0];
