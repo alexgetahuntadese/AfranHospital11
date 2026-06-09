@@ -122,7 +122,29 @@ public partial class DoctorWindow : Window
 
     private void Recall_Click(object sender, RoutedEventArgs e)
     {
-        RoomLabel.Text = $"Recalling {NowCallingLabel.Text}";
+        var ticket = NowCallingLabel.Text;
+        if (string.IsNullOrWhiteSpace(ticket) || ticket == "-")
+        {
+            RoomLabel.Text = "No called ticket to recall.";
+            return;
+        }
+
+        _ = RecallCurrentAsync(ticket);
+    }
+
+    private async Task RecallCurrentAsync(string ticket)
+    {
+        try
+        {
+            var recalled = await _apiClient.RecallCurrentAsync();
+            RoomLabel.Text = recalled is null
+                ? "No called ticket to recall."
+                : $"Recalling {recalled}.";
+        }
+        catch
+        {
+            RoomLabel.Text = $"Recalling {ticket}. API offline.";
+        }
     }
 
     private async void Complete_Click(object sender, RoutedEventArgs e)

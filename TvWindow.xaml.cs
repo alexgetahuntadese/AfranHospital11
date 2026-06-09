@@ -1,9 +1,9 @@
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace AfranHospitalKiosk;
@@ -12,17 +12,9 @@ public partial class TvWindow : Window
 {
     private readonly DispatcherTimer _clockTimer = new() { Interval = TimeSpan.FromSeconds(1) };
     private readonly DispatcherTimer _fallbackTimer = new() { Interval = TimeSpan.FromSeconds(8) };
-    private readonly DispatcherTimer _slideshowTimer = new() { Interval = TimeSpan.FromSeconds(7) };
     private readonly QueueApiClient _apiClient = new();
-    private readonly string[] _slides =
-    [
-        "Assets/AddisSlideshow/addis-01.jpg",
-        "Assets/AddisSlideshow/addis-02.jpg",
-        "Assets/AddisSlideshow/addis-03.tif",
-        "Assets/AddisSlideshow/addis-04.jpg"
-    ];
+    private readonly AmharicTicketAnnouncer _announcer = new();
     private int _fallbackTicket = 105;
-    private int _slideIndex;
 
     public TvWindow()
     {
@@ -31,29 +23,48 @@ public partial class TvWindow : Window
         _clockTimer.Tick += (_, _) => UpdateClock();
         _clockTimer.Start();
         UpdateClock();
-        ShowSlide(0);
-        _slideshowTimer.Tick += (_, _) => AdvanceSlide();
-        _slideshowTimer.Start();
+        Loaded += (_, _) =>
+        {
+            ApplyDisplayScale();
+            StartCorridorVideo();
+        };
+        SizeChanged += (_, _) => ApplyDisplayScale();
 
         _ = ConnectApiAsync();
     }
 
-    private void AdvanceSlide()
+    private void ApplyDisplayScale()
     {
-        _slideIndex = (_slideIndex + 1) % _slides.Length;
-        ShowSlide(_slideIndex);
+        var largeTv = ActualWidth >= 1800 || ActualHeight >= 1000;
+
+        WaitingStripRow.Height = new GridLength(largeTv ? 170 : 132);
+        WaitingStrip.Padding = largeTv ? new Thickness(22) : new Thickness(18);
+        NextPatientsTitle.FontSize = largeTv ? 36 : 28;
+        NextPatientsTitle.Margin = largeTv ? new Thickness(8, 0, 30, 0) : new Thickness(8, 0, 24, 0);
+
+        foreach (var ticket in new[] { QueueTicket1, QueueTicket2, QueueTicket3, QueueTicket4, QueueTicket5, QueueTicket6 })
+        {
+            ticket.FontSize = largeTv ? 48 : 34;
+        }
     }
 
-    private void ShowSlide(int index)
+    private void StartCorridorVideo()
     {
-        var image = new BitmapImage();
-        image.BeginInit();
-        image.UriSource = new Uri(_slides[index], UriKind.Relative);
-        image.CacheOption = BitmapCacheOption.OnLoad;
-        image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-        image.EndInit();
-        image.Freeze();
-        SlideImage.Source = image;
+        var videoPath = Path.Combine(AppContext.BaseDirectory, "Assets", "AddisSlideshow", "corridor-development-video.mp4");
+        if (!File.Exists(videoPath))
+        {
+            return;
+        }
+
+        CorridorVideo.Source = new Uri(videoPath, UriKind.Absolute);
+        CorridorVideo.Position = TimeSpan.Zero;
+        CorridorVideo.Play();
+    }
+
+    private void CorridorVideo_MediaEnded(object sender, RoutedEventArgs e)
+    {
+        CorridorVideo.Position = TimeSpan.Zero;
+        CorridorVideo.Play();
     }
 
     private async Task ConnectApiAsync()
@@ -71,6 +82,7 @@ public partial class TvWindow : Window
                     NowServingLabel.Text = ticket.Ticket;
                     RoomTicket3.Text = ticket.Ticket;
                 });
+                _ = _announcer.AnnounceAsync(ticket.Ticket);
             });
         }
         catch
@@ -97,7 +109,6 @@ public partial class TvWindow : Window
         NowServingLabel.Text = nowServing;
         RoomTicket3.Text = nowServing;
 
-        SetText(NextTicket1, display.Waiting.ElementAtOrDefault(0)?.Ticket);
         SetRoomTickets(display);
         SetQueueRows(display.Waiting);
 
@@ -146,7 +157,6 @@ public partial class TvWindow : Window
     {
         _fallbackTicket++;
         NowServingLabel.Text = $"M{_fallbackTicket:000}";
-        NextTicket1.Text = $"M{_fallbackTicket + 1:000}";
         RoomTicket1.Text = $"F{_fallbackTicket + 2:000}";
         RoomTicket2.Text = $"M{_fallbackTicket + 3:000}";
         RoomTicket3.Text = $"M{_fallbackTicket:000}";

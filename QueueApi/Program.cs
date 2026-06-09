@@ -120,6 +120,23 @@ app.MapPost("/api/queue/registration/complete", async (QueueDb db, IHubContext<Q
     return Results.Ok(new TicketResponse(called.TicketCode));
 });
 
+app.MapPost("/api/queue/registration/recall", async (QueueDb db, IHubContext<QueueHub> hub) =>
+{
+    var called = await db.Tickets
+        .Where(t => t.Status == TicketStatus.Called)
+        .OrderByDescending(t => t.CalledAt)
+        .FirstOrDefaultAsync();
+
+    if (called is null)
+    {
+        return Results.NotFound(new { message = "No called ticket to recall." });
+    }
+
+    await hub.Clients.All.SendAsync("TicketCalled", TicketDto.From(called));
+
+    return Results.Ok(new TicketResponse(called.TicketCode));
+});
+
 app.MapGet("/api/queue/registration/display", async (QueueDb db) =>
 {
     return Results.Ok(await QueueDisplay.Load(db));

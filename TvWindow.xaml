@@ -28,79 +28,45 @@
 
     <Border Background="#111" Padding="12">
         <Grid Background="#07131F">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition x:Name="WaitingStripRow" Height="132" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.18*" />
-                <ColumnDefinition Width="0.82*" />
+                <ColumnDefinition Width="1.05*" />
+                <ColumnDefinition Width="0.95*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
-                <Grid.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#0D2C52" Offset="0" />
-                        <GradientStop Color="#0D4C72" Offset="0.42" />
-                        <GradientStop Color="#081928" Offset="1" />
-                    </LinearGradientBrush>
-                </Grid.Background>
+            <Grid Grid.Row="0" Grid.Column="0" Background="#000">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="118" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <Image x:Name="SlideImage"
-                       Stretch="UniformToFill"
-                       Opacity="0.92"
-                       RenderOptions.BitmapScalingMode="HighQuality" />
-                <Border>
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                            <GradientStop Color="#DB07131F" Offset="0" />
-                            <GradientStop Color="#8A0D2C52" Offset="0.54" />
-                            <GradientStop Color="#C707131F" Offset="1" />
-                        </LinearGradientBrush>
-                    </Border.Background>
+                <Border Grid.Row="0" Background="#000" Padding="28,12">
+                    <Image Source="Assets/afranlogo.png"
+                           Height="84"
+                           MaxWidth="620"
+                           Stretch="Uniform"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
                 </Border>
 
-                <Grid Margin="34,28,34,28">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Image Source="Assets/afranlogo.png"
-                               Width="250"
-                               Stretch="Uniform"
-                               RenderOptions.BitmapScalingMode="HighQuality" />
-                        <StackPanel Grid.Column="1" Margin="18,4,0,0">
-                            <TextBlock Text="AFRAN HOSPITAL" Foreground="#F8FBFF" FontSize="36" FontWeight="Black" />
-                            <TextBlock Text="Compassion - Care - Community" Foreground="#DDEBFA" FontSize="20" />
-                        </StackPanel>
-                    </Grid>
-
-                    <StackPanel Grid.Row="1" Margin="18,70,0,0">
-                        <TextBlock Text="WELCOME TO" Foreground="#F8FBFF" FontSize="34" />
-                        <TextBlock Text="ADDIS ABABA" Foreground="#F8FBFF" FontSize="70" FontWeight="Black" />
-                        <TextBlock Text="A CITY OF UNITY," Foreground="#F8FBFF" FontSize="28" FontWeight="SemiBold" Margin="0,12,0,0" />
-                        <TextBlock Text="HERITAGE &amp; PROGRESS" Foreground="#F8FBFF" FontSize="28" FontWeight="SemiBold" />
-                    </StackPanel>
-
-                    <Border Grid.Row="2"
-                            Background="#CC07131F"
-                            CornerRadius="8"
-                            Padding="24"
-                            Width="430"
-                            HorizontalAlignment="Left">
-                        <StackPanel>
-                            <TextBlock Text="Addis Ababa" Foreground="#14E3C2" FontSize="34" FontStyle="Italic" />
-                            <TextBlock Text="The heart of Ethiopia" Foreground="#F8FBFF" FontSize="20" Margin="0,8,0,0" />
-                            <TextBlock Text="A city that inspires and grows together." Foreground="#F8FBFF" FontSize="18" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
-                </Grid>
+                <MediaElement x:Name="CorridorVideo"
+                              Grid.Row="1"
+                              LoadedBehavior="Manual"
+                              UnloadedBehavior="Stop"
+                              Stretch="Uniform"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              Opacity="1"
+                              IsMuted="True"
+                              Volume="0"
+                              MediaEnded="CorridorVideo_MediaEnded" />
             </Grid>
 
-            <Border Grid.Column="1" Background="#061522" Padding="24">
+            <Border Grid.Row="0" Grid.Column="1" Background="#061522" Padding="24">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="78" />
@@ -124,90 +90,120 @@
                         </StackPanel>
                     </Grid>
 
-                    <Border Grid.Row="1" Style="{StaticResource Panel}" Padding="28" Margin="0,12,0,0">
+                    <Border Grid.Row="1" Style="{StaticResource Panel}" Padding="24" Margin="0,12,0,0">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" MinHeight="330" />
                             </Grid.RowDefinitions>
 
-                            <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="NOW SERVING" Foreground="#F8FBFF" FontSize="44" FontWeight="Black" TextAlignment="Center" />
-                                <TextBlock Text="Current patient called to registration" Foreground="#8FC9DC" FontSize="18" FontWeight="SemiBold" TextAlignment="Center" />
-                            </StackPanel>
+                            <TextBlock Text="NOW SERVING" Foreground="#F8FBFF" FontSize="44" FontWeight="Black" TextAlignment="Center" />
 
-                            <Border Grid.Row="1" CornerRadius="8" Margin="0,26,0,24">
+                            <Border Grid.Row="1" CornerRadius="8" Margin="0,18,0,0">
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                         <GradientStop Color="#31D66F" Offset="0" />
                                         <GradientStop Color="#006B4D" Offset="1" />
                                     </LinearGradientBrush>
                                 </Border.Background>
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock x:Name="NowServingLabel" Text="-" Foreground="#F8FBFF" FontSize="176" FontWeight="Black" TextAlignment="Center" />
-                                    <Border Background="#D8FFF5" CornerRadius="8" Padding="18,12" Margin="48,10">
+                                <Grid Margin="24,18">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="Both">
+                                        <TextBlock x:Name="NowServingLabel" Text="-" Foreground="#F8FBFF" FontSize="180" FontWeight="Black" TextAlignment="Center" LineHeight="180" />
+                                    </Viewbox>
+                                    <Border Grid.Row="1" Background="#D8FFF5" CornerRadius="8" Padding="18,10" Margin="48,10,48,0">
                                         <TextBlock Text="GO TO ROOM 3" Foreground="#063A30" FontSize="34" FontWeight="Black" TextAlignment="Center" />
                                     </Border>
-                                </StackPanel>
+                                </Grid>
                             </Border>
 
-                            <Grid Grid.Row="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1.08*" />
-                                    <ColumnDefinition Width="0.92*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Border Style="{StaticResource Panel}" Padding="18" Margin="0,0,12,0">
-                                    <StackPanel>
-                                        <TextBlock Text="NEXT PATIENT" Foreground="#14E3C2" FontSize="21" FontWeight="Black" />
-                                        <TextBlock Text="First waiting ticket" Foreground="#8FC9DC" FontSize="14" FontWeight="SemiBold" Margin="0,2,0,0" />
-                                        <Border CornerRadius="8" Background="#064F90" Padding="18" Margin="0,10,0,0">
-                                            <TextBlock x:Name="NextTicket1" Text="-" Foreground="#F8FBFF" FontSize="56" FontWeight="Black" TextAlignment="Center" />
-                                        </Border>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Column="1" Style="{StaticResource Panel}" Padding="18" Margin="12,0,0,0">
-                                    <StackPanel>
-                                        <TextBlock Text="COUNTERS" Foreground="#14E3C2" FontSize="21" FontWeight="Black" />
-                                        <Border Style="{StaticResource RoomCard}" Background="#087660" Margin="0,10,0,8">
-                                            <Grid>
-                                                <TextBlock Text="Now" Foreground="#F8FBFF" FontSize="20" FontWeight="Bold" />
-                                                <TextBlock x:Name="RoomTicket3" Text="-" Foreground="#F8FBFF" FontSize="34" FontWeight="Black" HorizontalAlignment="Right" />
-                                            </Grid>
-                                        </Border>
-                                        <Border Style="{StaticResource RoomCard}" Margin="0,8,0,0">
-                                            <Grid>
-                                                <TextBlock Text="After next" Foreground="#F8FBFF" FontSize="20" FontWeight="Bold" />
-                                                <TextBlock x:Name="RoomTicket1" Text="-" Foreground="#F8FBFF" FontSize="34" FontWeight="Black" HorizontalAlignment="Right" />
-                                            </Grid>
-                                        </Border>
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
                         </Grid>
                     </Border>
                 </Grid>
             </Border>
 
+            <Border x:Name="WaitingStrip" Grid.Row="1" Grid.ColumnSpan="2" CornerRadius="8" Padding="18" Margin="0,12,0,0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#31D66F" Offset="0" />
+                        <GradientStop Color="#006B4D" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="NextPatientsTitle" Text="NEXT PATIENTS" Foreground="#F8FBFF" FontSize="28" FontWeight="Black" VerticalAlignment="Center" Margin="8,0,24,0" />
+
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border CornerRadius="8" Background="#F8FBFF" Padding="12,8" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="1" Foreground="#006B4D" FontSize="16" FontWeight="Black" TextAlignment="Center" />
+                                <TextBlock x:Name="QueueTicket1" Text="-" Foreground="#006B4D" FontSize="34" FontWeight="Black" TextAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" CornerRadius="8" Background="#D8FFF5" Padding="12,8" Margin="8,0">
+                            <StackPanel>
+                                <TextBlock Text="2" Foreground="#006B4D" FontSize="16" FontWeight="Black" TextAlignment="Center" />
+                                <TextBlock x:Name="QueueTicket2" Text="-" Foreground="#006B4D" FontSize="34" FontWeight="Black" TextAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" CornerRadius="8" Background="#D8FFF5" Padding="12,8" Margin="8,0">
+                            <StackPanel>
+                                <TextBlock Text="3" Foreground="#006B4D" FontSize="16" FontWeight="Black" TextAlignment="Center" />
+                                <TextBlock x:Name="QueueTicket3" Text="-" Foreground="#006B4D" FontSize="34" FontWeight="Black" TextAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="3" CornerRadius="8" Background="#D8FFF5" Padding="12,8" Margin="8,0">
+                            <StackPanel>
+                                <TextBlock Text="4" Foreground="#006B4D" FontSize="16" FontWeight="Black" TextAlignment="Center" />
+                                <TextBlock x:Name="QueueTicket4" Text="-" Foreground="#006B4D" FontSize="34" FontWeight="Black" TextAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="4" CornerRadius="8" Background="#D8FFF5" Padding="12,8" Margin="8,0">
+                            <StackPanel>
+                                <TextBlock Text="5" Foreground="#006B4D" FontSize="16" FontWeight="Black" TextAlignment="Center" />
+                                <TextBlock x:Name="QueueTicket5" Text="-" Foreground="#006B4D" FontSize="34" FontWeight="Black" TextAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="5" CornerRadius="8" Background="#D8FFF5" Padding="12,8" Margin="8,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="6" Foreground="#006B4D" FontSize="16" FontWeight="Black" TextAlignment="Center" />
+                                <TextBlock x:Name="QueueTicket6" Text="-" Foreground="#006B4D" FontSize="34" FontWeight="Black" TextAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+
             <StackPanel Visibility="Collapsed">
                 <TextBlock x:Name="TickerLabel" />
+                <TextBlock x:Name="RoomTicket1" />
                 <TextBlock x:Name="RoomTicket2" />
+                <TextBlock x:Name="RoomTicket3" />
                 <TextBlock x:Name="RoomTicket4" />
                 <TextBlock x:Name="RoomTicket5" />
                 <TextBlock x:Name="QueueGender1" />
-                <TextBlock x:Name="QueueTicket1" />
                 <TextBlock x:Name="QueueGender2" />
-                <TextBlock x:Name="QueueTicket2" />
                 <TextBlock x:Name="QueueGender3" />
-                <TextBlock x:Name="QueueTicket3" />
                 <TextBlock x:Name="QueueGender4" />
-                <TextBlock x:Name="QueueTicket4" />
                 <TextBlock x:Name="QueueGender5" />
-                <TextBlock x:Name="QueueTicket5" />
                 <TextBlock x:Name="QueueGender6" />
-                <TextBlock x:Name="QueueTicket6" />
             </StackPanel>
         </Grid>
     </Border>

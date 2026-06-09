@@ -47,6 +47,17 @@ public sealed class QueueApiClient : IAsyncDisposable
         return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
     }
 
+    public async Task<string?> RecallCurrentAsync()
+    {
+        var response = await _httpClient.PostAsync("/api/queue/registration/recall", null);
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
+    }
+
     public async Task<QueueDisplay?> GetDisplayAsync()
     {
         return await _httpClient.GetFromJsonAsync<QueueDisplay>("/api/queue/registration/display");

@@ -25,7 +25,15 @@
             <Setter Property="MinHeight" Value="174" />
             <Setter Property="Padding" Value="28" />
             <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Background" Value="#FFFDF7" />
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#FFFFFF" Offset="0" />
+                        <GradientStop Color="#FFFDF7" Offset="0.56" />
+                        <GradientStop Color="#EAF6EF" Offset="1" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Foreground" Value="#10251F" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
@@ -41,9 +49,9 @@
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect BlurRadius="24"
-                                      ShadowDepth="12"
+                                      ShadowDepth="14"
                                       Direction="270"
-                                      Opacity="0.35"
+                                      Opacity="0.42"
                                       Color="#050707" />
                 </Setter.Value>
             </Setter>
@@ -59,19 +67,66 @@
                         <Border x:Name="Shell"
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="8"
-                                BorderBrush="#CDA24A"
-                                BorderThickness="1">
-                            <ContentPresenter Margin="{TemplateBinding Padding}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                BorderBrush="#F0D47A"
+                                BorderThickness="1.4"
+                                SnapsToDevicePixels="True">
+                            <Grid ClipToBounds="True">
+                                <Border CornerRadius="8"
+                                        Opacity="0.74">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FFFFFF" Offset="0" />
+                                            <GradientStop Color="#1AFFFFFF" Offset="0.42" />
+                                            <GradientStop Color="#00FFFFFF" Offset="0.72" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                                <Border Height="18"
+                                        VerticalAlignment="Bottom"
+                                        CornerRadius="0,0,8,8">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#00000000" Offset="0" />
+                                            <GradientStop Color="#1F08110D" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                                <Border Margin="1"
+                                        CornerRadius="7"
+                                        BorderThickness="1,1,1,0"
+                                        BorderBrush="#B8FFFFFF" />
+                                <Border Margin="0,0,0,1"
+                                        CornerRadius="8"
+                                        BorderThickness="0,0,0,2"
+                                        BorderBrush="#330A3F32" />
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Shell" Property="Background" Value="#F6FFF9" />
-                                <Setter TargetName="Shell" Property="BorderBrush" Value="#D8A531" />
+                                <Setter TargetName="Shell" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#FFFFFF" Offset="0" />
+                                            <GradientStop Color="#F8FFF9" Offset="0.55" />
+                                            <GradientStop Color="#DFF3E8" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="Shell" Property="BorderBrush" Value="#F6CD4A" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Shell" Property="Background" Value="#E4F6E9" />
+                                <Setter TargetName="Shell" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#DCEEE4" Offset="0" />
+                                            <GradientStop Color="#EFF9F2" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="Shell" Property="BorderBrush" Value="#C3911C" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="Shell" Property="Opacity" Value="0.55" />
@@ -101,9 +156,9 @@
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect BlurRadius="34"
-                                      ShadowDepth="16"
+                                      ShadowDepth="18"
                                       Direction="270"
-                                      Opacity="0.45"
+                                      Opacity="0.50"
                                       Color="#050707" />
                 </Setter.Value>
             </Setter>
