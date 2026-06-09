@@ -91,8 +91,9 @@ Assets\Voices\Amharic\M105.wav
 Assets\Voices\Amharic\F023.mp3
 ```
 
-When the doctor screen calls or recalls a ticket, the TV screen plays the
-matching WAV or MP3 file if it exists.
+When the doctor screen calls or recalls a ticket, the doctor screen plays the
+matching WAV or MP3 file if it exists. The TV screen also plays the same local
+audio when it receives a live `TicketCalled` update.
 
 To generate online Amharic ticket audio for every `M001-M999` and `F001-F999`
 file, with the speaking voice randomly chosen male or female independent of the

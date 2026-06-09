@@ -117,8 +117,10 @@ public partial class DoctorWindow : Window
         catch
         {
             _fallbackTicket++;
-            NowCallingLabel.Text = $"REG-{_fallbackTicket:000}";
+            var ticket = $"M{_fallbackTicket:000}";
+            NowCallingLabel.Text = ticket;
             RoomLabel.Text = "API offline. Local call only.";
+            _ = _announcer.AnnounceAsync(ticket);
         }
         finally
         {
