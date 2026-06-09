@@ -15,10 +15,7 @@
     <Content Include="Assets\AddisSlideshow\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Tools\AmharicTts\synthesize_ticket.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Tools\AmharicTts\setup.ps1">
+    <Content Include="Assets\Voices\Amharic\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

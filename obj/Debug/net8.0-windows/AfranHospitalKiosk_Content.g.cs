@@ -14,7 +14,6 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/addisslideshow/addis-04.jpg")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/addisslideshow/corridor-development-video.mp4")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/addisslideshow/sources.json")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("tools/amharictts/synthesize_ticket.py")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("tools/amharictts/setup.ps1")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/voices/amharic/readme.md")]
 
 

@@ -80,8 +80,6 @@ C:\Users\USER\AppData\Local\Temp\AfranHospitalTvBuildCheck\AfranHospitalKiosk.de
 C:\Users\USER\AppData\Local\Temp\AfranHospitalTvBuildCheck\AfranHospitalKiosk.runtimeconfig.json
 C:\Users\USER\AppData\Local\Temp\AfranHospitalTvBuildCheck\AfranHospitalKiosk.dll
 C:\Users\USER\AppData\Local\Temp\AfranHospitalTvBuildCheck\AfranHospitalKiosk.pdb
-C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\Tools\AmharicTts\synthesize_ticket.py
-C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\Tools\AmharicTts\setup.ps1
 C:\Users\USER\AppData\Local\Temp\AfranHospitalTvBuildCheck\Tools\AmharicTts\synthesize_ticket.py
 C:\Users\USER\AppData\Local\Temp\AfranHospitalTvBuildCheck\Tools\AmharicTts\setup.ps1
 C:\Users\USER\Desktop\AfranHospital11\verify-build\Assets\afranlogo.png
@@ -143,3 +141,4 @@ C:\Users\USER\Desktop\AfranHospital11\build-check\app\Microsoft.Extensions.Optio
 C:\Users\USER\Desktop\AfranHospital11\build-check\app\Microsoft.Extensions.Primitives.dll
 C:\Users\USER\Desktop\AfranHospital11\build-check\app\System.IO.Pipelines.dll
 C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\AfranHospitalKiosk.exe
+C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\Assets\Voices\Amharic\README.md

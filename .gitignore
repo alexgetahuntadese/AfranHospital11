@@ -4,10 +4,7 @@ QueueApi/bin/
 QueueApi/obj/
 QueueApi/SQLite.db*
 QueueApi/*.log
-Tools/AmharicTts/.venv/
-Tools/AmharicTts/model/
-Tools/AmharicTts/generated/
-Tools/AmharicTts/sample.wav
+Tools/AmharicTts/
 Tools/Downloads/
 Tools/eSpeakNG/
 build-check/

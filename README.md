@@ -74,24 +74,22 @@ Current app state:
 - Doctor and TV modes read from the API and subscribe to SignalR queue updates.
 - Publish `QueueApi` and the WPF app separately for LAN deployment.
 
-## Natural Amharic Voice
+## Local Amharic Audio
 
-The TV screen can announce called tickets in a local neural Amharic voice.
-Run this once on the TV PC before launching `AfranHospitalKiosk.exe tv`:
-
-```powershell
-.\Tools\AmharicTts\setup.ps1
-```
-
-The setup downloads the CPU PyTorch runtime and Meta MMS Amharic TTS model
-(`facebook/mms-tts-amh`) into `Tools\AmharicTts`. After that, ticket audio is
-generated locally and cached as WAV files. The first announcement can take a
-moment; repeated tickets play from cache.
-
-The model expects romanized Amharic input, so the app speaks phrases like:
+The TV screen can announce called tickets using downloaded or recorded local
+WAV files. Put Amharic announcement audio files here:
 
 ```text
-ibakwo kutir em meto amist wede memezgebiya kotari hulet yihidu
+Assets\Voices\Amharic
 ```
 
-That corresponds to: "Please, number M105, go to registration counter two."
+Use the exact ticket code as the file name:
+
+```powershell
+Assets\Voices\Amharic\M001.wav
+Assets\Voices\Amharic\M105.wav
+Assets\Voices\Amharic\F023.wav
+```
+
+When the doctor screen calls or recalls a ticket, the TV screen plays the
+matching WAV file if it exists.
