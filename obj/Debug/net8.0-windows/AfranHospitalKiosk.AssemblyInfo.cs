@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AfranHospitalKiosk")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e8b766284786f38448787964b319b6b8105cfa14")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5f678b18879dfd5fd65f589b64c132ea02a77de8")]
 [assembly: System.Reflection.AssemblyProductAttribute("AfranHospitalKiosk")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AfranHospitalKiosk")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
