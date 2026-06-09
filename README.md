@@ -77,7 +77,7 @@ Current app state:
 ## Local Amharic Audio
 
 The TV screen can announce called tickets using downloaded or recorded local
-WAV files. Put Amharic announcement audio files here:
+audio files. Put Amharic announcement audio files here:
 
 ```text
 Assets\Voices\Amharic
@@ -86,10 +86,22 @@ Assets\Voices\Amharic
 Use the exact ticket code as the file name:
 
 ```powershell
-Assets\Voices\Amharic\M001.wav
+Assets\Voices\Amharic\M001.mp3
 Assets\Voices\Amharic\M105.wav
-Assets\Voices\Amharic\F023.wav
+Assets\Voices\Amharic\F023.mp3
 ```
 
 When the doctor screen calls or recalls a ticket, the TV screen plays the
-matching WAV file if it exists.
+matching WAV or MP3 file if it exists.
+
+To generate online Amharic samples with one male and one female voice:
+
+```powershell
+.\Tools\VoiceSampleGenerator\Scripts\python.exe .\Tools\VoiceSampleGenerator\generate_amharic_ticket_audio.py --start 1 --end 999 --prefix both
+```
+
+The generated sentence format is:
+
+```text
+ቁጥር ኤም ዜሮ ሃያ አምስት፣ ወደ ሐኪም ክፍል 101 ይሂዱ።
+```

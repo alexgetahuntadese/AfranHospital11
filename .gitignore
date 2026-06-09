@@ -7,4 +7,8 @@ QueueApi/*.log
 Tools/AmharicTts/
 Tools/Downloads/
 Tools/eSpeakNG/
+Tools/VoiceSampleGenerator/Include/
+Tools/VoiceSampleGenerator/Lib/
+Tools/VoiceSampleGenerator/Scripts/
+Tools/VoiceSampleGenerator/pyvenv.cfg
 build-check/

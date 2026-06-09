@@ -1,5 +1,5 @@
 using System.IO;
-using System.Media;
+using System.Runtime.InteropServices;
 
 namespace AfranHospitalKiosk;
 
@@ -28,8 +28,7 @@ public sealed class AmharicTicketAnnouncer
         {
             await Task.Run(() =>
             {
-                using var player = new SoundPlayer(audioPath);
-                player.PlaySync();
+                PlayAudioFile(audioPath);
             });
         }
         catch
@@ -50,10 +49,13 @@ public sealed class AmharicTicketAnnouncer
         }
 
         var safeTicket = SafeFilePart(ticket.Trim().ToUpperInvariant());
-        var exactTicketAudio = Path.Combine(_voiceRoot, $"{safeTicket}.wav");
-        if (File.Exists(exactTicketAudio))
+        foreach (var extension in new[] { ".wav", ".mp3" })
         {
-            return exactTicketAudio;
+            var exactTicketAudio = Path.Combine(_voiceRoot, $"{safeTicket}{extension}");
+            if (File.Exists(exactTicketAudio))
+            {
+                return exactTicketAudio;
+            }
         }
 
         return null;
@@ -94,4 +96,34 @@ public sealed class AmharicTicketAnnouncer
 
         return value;
     }
+
+    private static void PlayAudioFile(string path)
+    {
+        var alias = $"ticket_{Guid.NewGuid():N}";
+        var mediaType = Path.GetExtension(path).Equals(".wav", StringComparison.OrdinalIgnoreCase)
+            ? "waveaudio"
+            : "mpegvideo";
+        var openCommand = $"open \"{path}\" type {mediaType} alias {alias}";
+        try
+        {
+            SendMciCommand(openCommand);
+            SendMciCommand($"play {alias} wait");
+        }
+        finally
+        {
+            _ = mciSendString($"close {alias}", null, 0, IntPtr.Zero);
+        }
+    }
+
+    private static void SendMciCommand(string command)
+    {
+        var error = mciSendString(command, null, 0, IntPtr.Zero);
+        if (error != 0)
+        {
+            throw new InvalidOperationException($"Audio playback failed: {error}");
+        }
+    }
+
+    [DllImport("winmm.dll", CharSet = CharSet.Unicode)]
+    private static extern int mciSendString(string command, string? returnValue, int returnLength, IntPtr callback);
 }
