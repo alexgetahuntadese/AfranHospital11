@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QueueApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e980d565cc1e79d5023b4d79dde9659d97401d10")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ea357b591a04a799aeceb3422cfcd1f38b49c6d1")]
 [assembly: System.Reflection.AssemblyProductAttribute("QueueApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QueueApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

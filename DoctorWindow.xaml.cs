@@ -33,9 +33,10 @@ public partial class DoctorWindow : Window
             });
             RoomLabel.Text = $"Connected to {_apiClient.BaseUrl}";
         }
-        catch
+        catch (Exception ex)
         {
             RoomLabel.Text = "API offline. Using local demo controls.";
+            System.Diagnostics.Debug.WriteLine($"API Connection Error: {ex.Message}");
         }
     }
 
@@ -114,13 +115,14 @@ public partial class DoctorWindow : Window
 
             await RefreshDisplayAsync();
         }
-        catch
+        catch (Exception ex)
         {
             _fallbackTicket++;
             var ticket = $"M{_fallbackTicket:000}";
             NowCallingLabel.Text = ticket;
             RoomLabel.Text = "API offline. Local call only.";
             _ = _announcer.AnnounceAsync(ticket);
+            System.Diagnostics.Debug.WriteLine($"Call Next Error: {ex.Message}");
         }
         finally
         {
@@ -153,9 +155,10 @@ public partial class DoctorWindow : Window
                 _ = _announcer.AnnounceAsync(recalled);
             }
         }
-        catch
+        catch (Exception ex)
         {
             RoomLabel.Text = $"Recalling {ticket}. API offline.";
+            System.Diagnostics.Debug.WriteLine($"Recall Error: {ex.Message}");
         }
     }
 
@@ -184,9 +187,10 @@ public partial class DoctorWindow : Window
 
             await RefreshDisplayAsync();
         }
-        catch
+        catch (Exception ex)
         {
             RoomLabel.Text = "API offline. Complete was not synced.";
+            System.Diagnostics.Debug.WriteLine($"Complete Error: {ex.Message}");
         }
         finally
         {

@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Linq;
 using System.Printing;
 using System.Windows;
 using System.Windows.Controls;
@@ -59,6 +60,9 @@ public partial class MainWindow : Window
             return;
         }
 
+        // Disable buttons during processing
+        SetButtonsEnabled(false);
+        
         _gender = gender;
         _step = WizardStep.Printing;
         UpdateWizard();
@@ -74,6 +78,9 @@ public partial class MainWindow : Window
 
         ResetSelection();
         UpdateWizard();
+        
+        // Re-enable buttons for next registration
+        SetButtonsEnabled(true);
     }
 
     private async Task<string> CreateLanTicketOrFallback(string gender)
@@ -86,9 +93,10 @@ public partial class MainWindow : Window
                 return ticket;
             }
         }
-        catch
+        catch (Exception ex)
         {
             // Keep the kiosk useful if the LAN API is temporarily offline.
+            System.Diagnostics.Debug.WriteLine($"API Error: {ex.Message}");
         }
 
         var fallback = CurrentTicket;
@@ -116,6 +124,52 @@ public partial class MainWindow : Window
         _language = LanguageState.English;
         _gender = null;
         _step = WizardStep.Language;
+    }
+
+    private void SetButtonsEnabled(bool enabled)
+    {
+        // Find all buttons in the language and gender panels and enable/disable them
+        var languageButtons = FindVisualChildren<Button>(LanguagePanel);
+        var genderButtons = FindVisualChildren<Button>(GenderPanel);
+        
+        foreach (var button in languageButtons.Concat(genderButtons))
+        {
+            button.IsEnabled = enabled;
+        }
+        
+        // Also enable/disable the reset button
+        var resetButton = this.FindName("NewButtonLabel") as TextBlock;
+        if (resetButton != null)
+        {
+            var parentButton = resetButton.Parent as Button;
+            if (parentButton != null)
+            {
+                parentButton.IsEnabled = enabled;
+            }
+        }
+        
+        // Enable/disable back button
+        BackButton.IsEnabled = enabled && _step == WizardStep.Gender;
+    }
+
+    private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+    {
+        if (depObj == null) return Enumerable.Empty<T>();
+        
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+        {
+            DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+            
+            if (child != null && child is T)
+            {
+                yield return (T)child;
+            }
+            
+            foreach (T childOfChild in FindVisualChildren<T>(child))
+            {
+                yield return childOfChild;
+            }
+        }
     }
 
     private bool TryPrintTicket(string ticket)

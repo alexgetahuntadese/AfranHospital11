@@ -11,6 +11,7 @@ public partial class App : Application
         {
             "doctor" or "dr" => new DoctorWindow(),
             "tv" or "display" => new TvWindow(),
+            "server" or "manager" or "admin" => new ServerManagerWindow(),
             _ => new MainWindow()
         };
 

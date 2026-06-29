@@ -85,12 +85,13 @@ public partial class TvWindow : Window
                 _ = _announcer.AnnounceAsync(ticket.Ticket);
             });
         }
-        catch
+        catch (Exception ex)
         {
             TickerLabel.Text = "Queue API offline  •  Demo display mode";
             _fallbackTimer.Tick += (_, _) => RotateFallbackTicket();
             _fallbackTimer.Start();
             RotateFallbackTicket();
+            System.Diagnostics.Debug.WriteLine($"TV API Connection Error: {ex.Message}");
         }
     }
 

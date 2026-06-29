@@ -47,9 +47,10 @@ public sealed class AmharicTicketAnnouncer
                 }
             }
         }
-        catch
+        catch (Exception ex)
         {
             // Voice playback is optional; the TV queue display should keep running.
+            System.Diagnostics.Debug.WriteLine($"Audio Playback Error: {ex.Message}");
         }
         finally
         {

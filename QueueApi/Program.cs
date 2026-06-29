@@ -10,7 +10,14 @@ builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
-        policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(_ => true));
+        policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(origin =>
+        {
+            // Allow localhost for development and LAN IPs for deployment
+            if (string.IsNullOrEmpty(origin)) return true;
+            if (origin.Contains("localhost") || origin.Contains("127.0.0.1")) return true;
+            if (origin.StartsWith("http://192.168.") || origin.StartsWith("http://10.")) return true;
+            return false;
+        }));
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

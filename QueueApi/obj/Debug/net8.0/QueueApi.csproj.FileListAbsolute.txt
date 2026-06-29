@@ -1,3 +1,10 @@
+C:\Users\USER\Desktop\AfranHospital11\build-check\api\appsettings.Development.json
+C:\Users\USER\Desktop\AfranHospital11\build-check\api\appsettings.json
+C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.exe
+C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.deps.json
+C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.runtimeconfig.json
+C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.dll
+C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.pdb
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\appsettings.json
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\QueueApi.exe
@@ -52,6 +59,7 @@ C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.Assembl
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.csproj.CoreCompileInputs.cache
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.sourcelink.json
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\staticwebassets\msbuild.QueueApi.Microsoft.AspNetCore.StaticWebAssets.props
@@ -66,11 +74,3 @@ C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\refint\QueueApi.
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.pdb
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.genruntimeconfig.cache
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\ref\QueueApi.dll
-C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.sourcelink.json
-C:\Users\USER\Desktop\AfranHospital11\build-check\api\appsettings.Development.json
-C:\Users\USER\Desktop\AfranHospital11\build-check\api\appsettings.json
-C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.exe
-C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.deps.json
-C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.runtimeconfig.json
-C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.dll
-C:\Users\USER\Desktop\AfranHospital11\build-check\api\QueueApi.pdb

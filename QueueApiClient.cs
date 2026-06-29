@@ -86,6 +86,7 @@ public sealed class QueueApiClient : IAsyncDisposable
         {
             await _hubConnection.DisposeAsync();
         }
+        await ValueTask.CompletedTask;
     }
 
     private sealed record CreateTicketRequest(string Gender, string Language);
