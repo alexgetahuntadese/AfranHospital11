@@ -154,7 +154,7 @@ public partial class MainWindow : Window
 
     private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
     {
-        if (depObj == null) return Enumerable.Empty<T>();
+        if (depObj == null) yield break;
         
         for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
         {
