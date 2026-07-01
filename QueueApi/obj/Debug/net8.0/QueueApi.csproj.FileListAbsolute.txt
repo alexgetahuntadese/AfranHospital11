@@ -74,3 +74,8 @@ C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\refint\QueueApi.
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.pdb
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.genruntimeconfig.cache
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\ref\QueueApi.dll
+C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\portable\QueueApi\web.config
+C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\portable\QueueApi\appsettings.Development.json
+C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\portable\QueueApi\appsettings.json
+C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\portable\QueueApi\QueueApi.deps.json
+C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\portable\QueueApi\QueueApi.runtimeconfig.json
