@@ -139,7 +139,9 @@ app.MapPost("/api/queue/registration/recall", async (QueueDb db, IHubContext<Que
         return Results.NotFound(new { message = "No called ticket to recall." });
     }
 
+    var display = await QueueDisplay.Load(db);
     await hub.Clients.All.SendAsync("TicketCalled", TicketDto.From(called));
+    await hub.Clients.All.SendAsync("QueueUpdated", display);
 
     return Results.Ok(new TicketResponse(called.TicketCode));
 });

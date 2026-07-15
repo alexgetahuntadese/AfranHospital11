@@ -2125,9 +2125,11 @@ C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\System.IO.Pipelin
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\AfranHospitalKiosk.csproj.AssemblyReference.cache
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\DoctorWindow.baml
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\MainWindow.baml
+C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\ServerManagerWindow.baml
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\TvWindow.baml
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\DoctorWindow.g.cs
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\ServerManagerWindow.g.cs
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\TvWindow.g.cs
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\App.g.cs
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\AfranHospitalKiosk_Content.g.cs
@@ -2144,5 +2146,3 @@ C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\refint\AfranHospi
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\AfranHospitalKiosk.pdb
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\AfranHospitalKiosk.genruntimeconfig.cache
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\ref\AfranHospitalKiosk.dll
-C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\ServerManagerWindow.baml
-C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\ServerManagerWindow.g.cs

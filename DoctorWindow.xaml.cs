@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -11,7 +12,6 @@ public partial class DoctorWindow : Window
     private readonly QueueApiClient _apiClient = new();
     private readonly AmharicTicketAnnouncer _announcer = new();
     private int _fallbackTicket = 105;
-    private bool _isBusy;
 
     public DoctorWindow()
     {
@@ -19,6 +19,7 @@ public partial class DoctorWindow : Window
         _clockTimer.Tick += (_, _) => UpdateClock();
         _clockTimer.Start();
         UpdateClock();
+        
         _ = ConnectApiAsync();
     }
 
@@ -30,12 +31,20 @@ public partial class DoctorWindow : Window
             await _apiClient.ConnectHubAsync(display =>
             {
                 Dispatcher.Invoke(() => ApplyDisplay(display));
+            }, ticket =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    NowCallingLabel.Text = ticket.Ticket;
+                    RoomLabel.Text = "Doctor Room 3";
+                });
+                _ = _announcer.AnnounceAsync(ticket.Ticket);
             });
             RoomLabel.Text = $"Connected to {_apiClient.BaseUrl}";
         }
         catch (Exception ex)
         {
-            RoomLabel.Text = "API offline. Using local demo controls.";
+            RoomLabel.Text = "API offline. Please check connection.";
             System.Diagnostics.Debug.WriteLine($"API Connection Error: {ex.Message}");
         }
     }
@@ -97,12 +106,13 @@ public partial class DoctorWindow : Window
 
     private async void CallNext_Click(object sender, RoutedEventArgs e)
     {
-        if (_isBusy)
+        // Disable only the clicked button to prevent double-clicks
+        Button? clickedButton = sender as Button;
+        if (clickedButton != null)
         {
-            return;
+            clickedButton.IsEnabled = false;
         }
 
-        SetButtonsEnabled(false);
         try
         {
             var ticket = await _apiClient.CallNextAsync();
@@ -126,7 +136,11 @@ public partial class DoctorWindow : Window
         }
         finally
         {
-            SetButtonsEnabled(true);
+            // Re-enable the clicked button
+            if (clickedButton != null)
+            {
+                clickedButton.IsEnabled = true;
+            }
         }
     }
 
@@ -164,12 +178,13 @@ public partial class DoctorWindow : Window
 
     private async void Complete_Click(object sender, RoutedEventArgs e)
     {
-        if (_isBusy)
+        // Disable only the clicked button to prevent double-clicks
+        Button? clickedButton = sender as Button;
+        if (clickedButton != null)
         {
-            return;
+            clickedButton.IsEnabled = false;
         }
 
-        SetButtonsEnabled(false);
         try
         {
             var completed = await _apiClient.CompleteAsync();
@@ -194,17 +209,14 @@ public partial class DoctorWindow : Window
         }
         finally
         {
-            SetButtonsEnabled(true);
+            // Re-enable the clicked button
+            if (clickedButton != null)
+            {
+                clickedButton.IsEnabled = true;
+            }
         }
     }
 
-    private void SetButtonsEnabled(bool enabled)
-    {
-        _isBusy = !enabled;
-        CallNextButton.IsEnabled = enabled;
-        RecallButton.IsEnabled = enabled;
-        CompleteButton.IsEnabled = enabled;
-    }
 
     private void Window_KeyDown(object sender, KeyEventArgs e)
     {

@@ -25,6 +25,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         StartClock();
         UpdateWizard();
+        _ = ConnectApiAsync();
     }
 
     private void StartClock()
@@ -39,6 +40,18 @@ public partial class MainWindow : Window
         var now = DateTime.Now;
         ClockLabel.Text = now.ToString("HH:mm", CultureInfo.CurrentCulture);
         DateLabel.Text = now.ToString("dddd, dd MMM yyyy", CultureInfo.CurrentCulture);
+    }
+
+    private async Task ConnectApiAsync()
+    {
+        try
+        {
+            await _apiClient.ConnectHubAsync(_ => { });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"API Connection Error: {ex.Message}");
+        }
     }
 
     private void LanguageButton_Click(object sender, RoutedEventArgs e)
@@ -59,28 +72,33 @@ public partial class MainWindow : Window
         {
             return;
         }
-
-        // Disable buttons during processing
-        SetButtonsEnabled(false);
         
         _gender = gender;
         _step = WizardStep.Printing;
         UpdateWizard();
 
-        await Task.Delay(180);
-
         var ticket = await CreateLanTicketOrFallback(gender);
         TicketLabel.Text = ticket;
-        var printed = TryPrintTicket(ticket);
-        StatusLabel.Text = printed ? Text.Printed(ticket) : Text.PrintNotConfirmed(ticket);
-
-        await Task.Delay(1800);
-
+        
+        // Print in background
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                TryPrintTicket(ticket);
+            }
+            catch
+            {
+                // Silently handle print errors
+            }
+        });
+        
+        // Show thanks page for 3 seconds, then reset
+        await Task.Delay(3000);
+        
         ResetSelection();
         UpdateWizard();
-        
-        // Re-enable buttons for next registration
-        SetButtonsEnabled(true);
+        StatusLabel.Text = "Ready for registration.";
     }
 
     private async Task<string> CreateLanTicketOrFallback(string gender)
@@ -128,14 +146,13 @@ public partial class MainWindow : Window
 
     private void SetButtonsEnabled(bool enabled)
     {
-        // Find all buttons in the language and gender panels and enable/disable them
-        var languageButtons = FindVisualChildren<Button>(LanguagePanel);
-        var genderButtons = FindVisualChildren<Button>(GenderPanel);
+        // Enable/disable language buttons directly using named references
+        if (AmharicButton != null) AmharicButton.IsEnabled = enabled;
+        if (OromoButton != null) OromoButton.IsEnabled = enabled;
         
-        foreach (var button in languageButtons.Concat(genderButtons))
-        {
-            button.IsEnabled = enabled;
-        }
+        // Enable/disable gender buttons directly using named references
+        if (FemaleButton != null) FemaleButton.IsEnabled = enabled;
+        if (MaleButton != null) MaleButton.IsEnabled = enabled;
         
         // Also enable/disable the reset button
         var resetButton = this.FindName("NewButtonLabel") as TextBlock;
@@ -148,7 +165,7 @@ public partial class MainWindow : Window
             }
         }
         
-        // Enable/disable back button
+        // Enable/disable back button - only enable on gender step when buttons are enabled
         BackButton.IsEnabled = enabled && _step == WizardStep.Gender;
     }
 

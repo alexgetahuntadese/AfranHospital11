@@ -326,6 +326,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Button Grid.Column="0"
+                                        x:Name="AmharicButton"
                                         Style="{StaticResource WizardButton}"
                                         Margin="0,0,12,0"
                                         Tag="Amharic"
@@ -338,6 +339,7 @@
                                 </Button>
 
                                 <Button Grid.Column="1"
+                                        x:Name="OromoButton"
                                         Style="{StaticResource WizardButton}"
                                         Margin="12,0,0,0"
                                         Tag="Oromo"
@@ -384,6 +386,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Button Grid.Column="0"
+                                        x:Name="FemaleButton"
                                         Style="{StaticResource WizardButton}"
                                         Margin="0,0,12,0"
                                         Tag="Female"
@@ -396,6 +399,7 @@
                                 </Button>
 
                                 <Button Grid.Column="1"
+                                        x:Name="MaleButton"
                                         Style="{StaticResource WizardButton}"
                                         Margin="12,0,0,0"
                                         Tag="Male"
