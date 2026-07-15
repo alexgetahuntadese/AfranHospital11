@@ -86,17 +86,17 @@ public partial class ServerManagerWindow : Window
                     Dispatcher.Invoke(() =>
                     {
                         ApiStatusText.Text = "Status: Stopped";
-                        ApiStatusText.Foreground = System.Windows.Media.Brushes.Red;
+                        ApiStatusIndicator.Fill = System.Windows.Media.Brushes.Gray;
                         StartApiButton.Content = "Start API";
-                        StartApiButton.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(39, 174, 96));
+                        StartApiButton.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(5, 150, 105));
                         _apiProcess = null;
                     });
                 };
 
                 ApiStatusText.Text = "Status: Running";
-                ApiStatusText.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(39, 174, 96));
+                ApiStatusIndicator.Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(5, 150, 105));
                 StartApiButton.Content = "Stop API";
-                StartApiButton.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(231, 76, 60));
+                StartApiButton.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(220, 38, 38));
             }
         }
         catch (Exception ex)
@@ -124,9 +124,9 @@ public partial class ServerManagerWindow : Window
             }
 
             ApiStatusText.Text = "Status: Stopped";
-            ApiStatusText.Foreground = System.Windows.Media.Brushes.Red;
+            ApiStatusIndicator.Fill = System.Windows.Media.Brushes.Gray;
             StartApiButton.Content = "Start API";
-            StartApiButton.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(39, 174, 96));
+            StartApiButton.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(5, 150, 105));
             _apiProcess = null;
         }
     }
@@ -145,8 +145,10 @@ public partial class ServerManagerWindow : Window
         {
             _kioskWindow = null;
             KioskStatusText.Text = "Not running";
+            KioskStatusDot.Fill = System.Windows.Media.Brushes.Gray;
         };
         KioskStatusText.Text = "Running";
+        KioskStatusDot.Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(37, 99, 235));
     }
 
     private void LaunchDoctorButton_Click(object sender, RoutedEventArgs e)
@@ -163,8 +165,10 @@ public partial class ServerManagerWindow : Window
         {
             _doctorWindow = null;
             DoctorStatusText.Text = "Not running";
+            DoctorStatusDot.Fill = System.Windows.Media.Brushes.Gray;
         };
         DoctorStatusText.Text = "Running";
+        DoctorStatusDot.Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(124, 58, 237));
     }
 
     private void LaunchTvButton_Click(object sender, RoutedEventArgs e)
@@ -181,8 +185,10 @@ public partial class ServerManagerWindow : Window
         {
             _tvWindow = null;
             TvStatusText.Text = "Not running";
+            TvStatusDot.Fill = System.Windows.Media.Brushes.Gray;
         };
         TvStatusText.Text = "Running";
+        TvStatusDot.Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(217, 119, 6));
     }
 
     private void CloseAllButton_Click(object sender, RoutedEventArgs e)
