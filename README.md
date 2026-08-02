@@ -136,7 +136,7 @@ file, with the speaking voice randomly chosen male or female independent of the
 ticket prefix:
 
 ```powershell
-.\Tools\VoiceSampleGenerator\Scripts\python.exe .\Tools\VoiceSampleGenerator\generate_amharic_ticket_audio.py --start 1 --end 999 --prefix both --room 101 --voice-mode random --force
+.\Tools\VoiceSampleGenerator\Scripts\python.exe .\Tools\VoiceSampleGenerator\generate_amharic_ticket_audio.py --start 1 --end 999 --prefix both --room 101 --male-room 102 --female-room 101 --voice-mode random --force
 ```
 
 The generated sentence format is:

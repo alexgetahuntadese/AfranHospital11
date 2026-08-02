@@ -81,6 +81,8 @@ async def main() -> None:
     parser.add_argument("--end", type=int, default=999, help="Last ticket number.")
     parser.add_argument("--prefix", choices=["M", "F", "both", "random"], default="both", help="Ticket prefix to generate.")
     parser.add_argument("--room", default="101", help="Doctor room number spoken in the sentence.")
+    parser.add_argument("--female-room", default=None, help="Room for female tickets; overrides --room.")
+    parser.add_argument("--male-room", default=None, help="Room for male tickets; overrides --room.")
     parser.add_argument("--concurrency", type=int, default=6, help="Parallel online TTS requests.")
     parser.add_argument("--seed", type=int, default=None, help="Optional seed for repeatable random prefix selection.")
     parser.add_argument(
@@ -140,7 +142,10 @@ async def main() -> None:
 
     async def guarded(prefix: str, number: int, voice: str | None) -> None:
         async with semaphore:
-            await generate_one(prefix, number, args.room, output_dir, args.force, voice)
+            room = args.male_room if prefix == "M" and args.male_room else (
+                args.female_room if prefix == "F" and args.female_room else args.room
+            )
+            await generate_one(prefix, number, room, output_dir, args.force, voice)
             print(f"generated {prefix}{number:03}")
 
     tasks = [
