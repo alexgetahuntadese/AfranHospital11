@@ -101,5 +101,8 @@ public sealed class QueueApiClient : IAsyncDisposable
     private sealed record TicketResponse(string Ticket);
 }
 
-public sealed record TicketDto(string Ticket, string Gender, string Language, string Status);
+public sealed record TicketDto(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt)
+{
+    public string TimeText => CreatedAt.ToLocalTime().ToString("HH:mm");
+}
 public sealed record QueueDisplay(TicketDto? NowServing, IReadOnlyList<TicketDto> Waiting, int WaitingCount);

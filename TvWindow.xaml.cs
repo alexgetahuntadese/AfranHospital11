@@ -81,6 +81,7 @@ public partial class TvWindow : Window
                 {
                     NowServingLabel.Text = ticket.Ticket;
                     RoomTicket3.Text = ticket.Ticket;
+                    RoomDisplayLabel.Text = $"GO TO ROOM {RoomFor(ticket)}";
                 });
                 _ = _announcer.AnnounceAsync(ticket.Ticket);
             });
@@ -109,6 +110,7 @@ public partial class TvWindow : Window
         var nowServing = display.NowServing?.Ticket ?? "-";
         NowServingLabel.Text = nowServing;
         RoomTicket3.Text = nowServing;
+        RoomDisplayLabel.Text = $"GO TO ROOM {RoomFor(display.NowServing)}";
 
         SetRoomTickets(display);
         SetQueueRows(display.Waiting);
@@ -142,6 +144,18 @@ public partial class TvWindow : Window
         genderLabel.Foreground = new SolidColorBrush(isFemale ? Color.FromRgb(255, 91, 147) : Color.FromRgb(0, 183, 241));
     }
 
+    private static string RoomFor(TicketDto? ticket)
+    {
+        if (ticket?.Gender.Equals("Male", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return "101";
+        }
+
+        return ticket?.Gender.Equals("Female", StringComparison.OrdinalIgnoreCase) == true
+            ? "102"
+            : "-";
+    }
+
     private static void SetText(TextBlock label, string? value)
     {
         label.Text = string.IsNullOrWhiteSpace(value) ? "-" : value;
@@ -158,6 +172,7 @@ public partial class TvWindow : Window
     {
         _fallbackTicket++;
         NowServingLabel.Text = $"M{_fallbackTicket:000}";
+        RoomDisplayLabel.Text = "GO TO ROOM 101";
         RoomTicket1.Text = $"F{_fallbackTicket + 2:000}";
         RoomTicket2.Text = $"M{_fallbackTicket + 3:000}";
         RoomTicket3.Text = $"M{_fallbackTicket:000}";
@@ -165,12 +180,12 @@ public partial class TvWindow : Window
         RoomTicket5.Text = $"M{_fallbackTicket + 5:000}";
         SetQueueRows(new[]
         {
-            new TicketDto($"M{_fallbackTicket + 1:000}", "Male", "Oromo", "Waiting"),
-            new TicketDto($"F{_fallbackTicket + 2:000}", "Female", "Amharic", "Waiting"),
-            new TicketDto($"M{_fallbackTicket + 3:000}", "Male", "English", "Waiting"),
-            new TicketDto($"F{_fallbackTicket + 4:000}", "Female", "Oromo", "Waiting"),
-            new TicketDto($"M{_fallbackTicket + 5:000}", "Male", "Amharic", "Waiting"),
-            new TicketDto($"F{_fallbackTicket + 6:000}", "Female", "English", "Waiting")
+            new TicketDto($"M{_fallbackTicket + 1:000}", "Male", "Oromo", "Waiting", DateTime.Now),
+            new TicketDto($"F{_fallbackTicket + 2:000}", "Female", "Amharic", "Waiting", DateTime.Now),
+            new TicketDto($"M{_fallbackTicket + 3:000}", "Male", "English", "Waiting", DateTime.Now),
+            new TicketDto($"F{_fallbackTicket + 4:000}", "Female", "Oromo", "Waiting", DateTime.Now),
+            new TicketDto($"M{_fallbackTicket + 5:000}", "Male", "Amharic", "Waiting", DateTime.Now),
+            new TicketDto($"F{_fallbackTicket + 6:000}", "Female", "English", "Waiting", DateTime.Now)
         });
     }
 

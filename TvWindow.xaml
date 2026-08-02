@@ -116,7 +116,7 @@
                                         <TextBlock x:Name="NowServingLabel" Text="-" Foreground="#F8FBFF" FontSize="180" FontWeight="Black" TextAlignment="Center" LineHeight="180" />
                                     </Viewbox>
                                     <Border Grid.Row="1" Background="#D8FFF5" CornerRadius="8" Padding="18,10" Margin="48,10,48,0">
-                                        <TextBlock Text="GO TO ROOM 3" Foreground="#063A30" FontSize="34" FontWeight="Black" TextAlignment="Center" />
+                                        <TextBlock x:Name="RoomDisplayLabel" Text="GO TO ROOM -" Foreground="#063A30" FontSize="34" FontWeight="Black" TextAlignment="Center" />
                                     </Border>
                                 </Grid>
                             </Border>

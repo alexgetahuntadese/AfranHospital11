@@ -306,11 +306,11 @@ public static class TicketStatus
 
 public sealed record CreateTicketRequest(string? Gender, string? Language);
 public sealed record TicketResponse(string Ticket);
-public sealed record TicketDto(string Ticket, string Gender, string Language, string Status)
+public sealed record TicketDto(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt)
 {
     public static TicketDto From(Ticket ticket)
     {
-        return new TicketDto(ticket.TicketCode, ticket.Gender, ticket.Language, ticket.Status);
+        return new TicketDto(ticket.TicketCode, ticket.Gender, ticket.Language, ticket.Status, ticket.CreatedAt);
     }
 }
 
