@@ -12,6 +12,9 @@ public partial class DoctorWindow : Window
     private readonly DispatcherTimer _queueRefreshTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private readonly QueueApiClient _apiClient = new();
     private readonly AmharicTicketAnnouncer _announcer = new();
+    private readonly object _announcementLock = new();
+    private string? _lastAnnouncedTicket;
+    private DateTime _lastAnnouncementUtc;
     private int _fallbackTicket = 105;
 
     public DoctorWindow()
@@ -42,7 +45,7 @@ public partial class DoctorWindow : Window
                     NowCallingLabel.Text = ticket.Ticket;
                     RoomLabel.Text = "Doctor Room 3";
                 });
-                _ = _announcer.AnnounceAsync(ticket.Ticket);
+                _ = AnnounceTicketOnceAsync(ticket.Ticket);
             });
             RoomLabel.Text = $"Connected to {_apiClient.BaseUrl}";
         }
@@ -100,7 +103,7 @@ public partial class DoctorWindow : Window
             RoomLabel.Text = ticket is null ? "No waiting tickets." : "Doctor Room 3";
             if (ticket is not null)
             {
-                _ = _announcer.AnnounceAsync(ticket);
+                _ = AnnounceTicketOnceAsync(ticket);
             }
 
             await RefreshDisplayAsync();
@@ -111,7 +114,7 @@ public partial class DoctorWindow : Window
             var ticket = $"M{_fallbackTicket:000}";
             NowCallingLabel.Text = ticket;
             RoomLabel.Text = "API offline. Local call only.";
-            _ = _announcer.AnnounceAsync(ticket);
+            _ = AnnounceTicketOnceAsync(ticket);
             System.Diagnostics.Debug.WriteLine($"Call Next Error: {ex.Message}");
         }
         finally
@@ -146,7 +149,7 @@ public partial class DoctorWindow : Window
                 : $"Recalling {recalled}.";
             if (recalled is not null)
             {
-                _ = _announcer.AnnounceAsync(recalled);
+                _ = AnnounceTicketOnceAsync(recalled);
             }
         }
         catch (Exception ex)
@@ -177,7 +180,7 @@ public partial class DoctorWindow : Window
                     : "No called ticket to complete.";
             if (next is not null)
             {
-                _ = _announcer.AnnounceAsync(next);
+                _ = AnnounceTicketOnceAsync(next);
             }
 
             await RefreshDisplayAsync();
@@ -195,6 +198,26 @@ public partial class DoctorWindow : Window
                 clickedButton.IsEnabled = true;
             }
         }
+    }
+
+    private Task AnnounceTicketOnceAsync(string ticket)
+    {
+        lock (_announcementLock)
+        {
+            if (string.Equals(_lastAnnouncedTicket, ticket, StringComparison.OrdinalIgnoreCase) &&
+                DateTime.UtcNow - _lastAnnouncementUtc < TimeSpan.FromSeconds(10))
+            {
+                return Task.CompletedTask;
+            }
+
+            _lastAnnouncedTicket = ticket;
+            _lastAnnouncementUtc = DateTime.UtcNow;
+        }
+
+        // AmharicTicketAnnouncer intentionally plays one announcement and one
+        // repeat (two plays total). This guard prevents the local API response
+        // and the SignalR TicketCalled event from announcing the same ticket twice.
+        return _announcer.AnnounceAsync(ticket);
     }
 
 
