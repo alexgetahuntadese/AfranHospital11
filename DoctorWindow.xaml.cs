@@ -13,9 +13,10 @@ public partial class DoctorWindow : Window
     private readonly QueueApiClient _apiClient = new();
     private readonly AmharicTicketAnnouncer _announcer = new();
     private readonly object _announcementLock = new();
+    private readonly SemaphoreSlim _actionLock = new(1, 1);
+    private readonly SemaphoreSlim _refreshLock = new(1, 1);
     private string? _lastAnnouncedTicket;
     private DateTime _lastAnnouncementUtc;
-    private int _fallbackTicket = 105;
 
     public DoctorWindow()
     {
@@ -24,7 +25,7 @@ public partial class DoctorWindow : Window
         _clockTimer.Start();
         UpdateClock();
 
-        _queueRefreshTimer.Tick += async (_, _) => await RefreshDisplayAsync();
+        _queueRefreshTimer.Tick += async (_, _) => await RefreshDisplaySafelyAsync();
         _queueRefreshTimer.Start();
         
         _ = ConnectApiAsync();
@@ -47,7 +48,7 @@ public partial class DoctorWindow : Window
                 });
                 _ = AnnounceTicketOnceAsync(ticket.Ticket);
             });
-            RoomLabel.Text = $"Connected to {_apiClient.BaseUrl}";
+            RoomLabel.Text = displayRoomText();
         }
         catch (Exception ex)
         {
@@ -58,12 +59,39 @@ public partial class DoctorWindow : Window
 
     private async Task RefreshDisplayAsync()
     {
-        var display = await _apiClient.GetDisplayAsync();
-        if (display is not null)
+        if (!await _refreshLock.WaitAsync(0))
         {
-            ApplyDisplay(display);
+            return;
+        }
+
+        try
+        {
+            var display = await _apiClient.GetDisplayAsync();
+            if (display is not null)
+            {
+                ApplyDisplay(display);
+            }
+        }
+        finally
+        {
+            _refreshLock.Release();
         }
     }
+
+    private async Task RefreshDisplaySafelyAsync()
+    {
+        try
+        {
+            await RefreshDisplayAsync();
+        }
+        catch (Exception ex)
+        {
+            RoomLabel.Text = "API offline. Please check connection.";
+            System.Diagnostics.Debug.WriteLine($"Queue refresh error: {ex.Message}");
+        }
+    }
+
+    private string displayRoomText() => "Doctor Room 3";
 
     private void ApplyDisplay(QueueDisplay display)
     {
@@ -89,12 +117,7 @@ public partial class DoctorWindow : Window
 
     private async void CallNext_Click(object sender, RoutedEventArgs e)
     {
-        // Disable only the clicked button to prevent double-clicks
-        Button? clickedButton = sender as Button;
-        if (clickedButton != null)
-        {
-            clickedButton.IsEnabled = false;
-        }
+        if (!await TryEnterActionAsync()) return;
 
         try
         {
@@ -110,24 +133,16 @@ public partial class DoctorWindow : Window
         }
         catch (Exception ex)
         {
-            _fallbackTicket++;
-            var ticket = $"M{_fallbackTicket:000}";
-            NowCallingLabel.Text = ticket;
-            RoomLabel.Text = "API offline. Local call only.";
-            _ = AnnounceTicketOnceAsync(ticket);
+            RoomLabel.Text = "Call failed. API is unavailable.";
             System.Diagnostics.Debug.WriteLine($"Call Next Error: {ex.Message}");
         }
         finally
         {
-            // Re-enable the clicked button
-            if (clickedButton != null)
-            {
-                clickedButton.IsEnabled = true;
-            }
+            LeaveAction();
         }
     }
 
-    private void Recall_Click(object sender, RoutedEventArgs e)
+    private async void Recall_Click(object sender, RoutedEventArgs e)
     {
         var ticket = NowCallingLabel.Text;
         if (string.IsNullOrWhiteSpace(ticket) || ticket == "-")
@@ -136,7 +151,15 @@ public partial class DoctorWindow : Window
             return;
         }
 
-        _ = RecallCurrentAsync(ticket);
+        if (!await TryEnterActionAsync()) return;
+        try
+        {
+            await RecallCurrentAsync(ticket);
+        }
+        finally
+        {
+            LeaveAction();
+        }
     }
 
     private async Task RecallCurrentAsync(string ticket)
@@ -161,23 +184,23 @@ public partial class DoctorWindow : Window
 
     private async void Complete_Click(object sender, RoutedEventArgs e)
     {
-        // Disable only the clicked button to prevent double-clicks
-        Button? clickedButton = sender as Button;
-        if (clickedButton != null)
-        {
-            clickedButton.IsEnabled = false;
-        }
+        if (!await TryEnterActionAsync()) return;
 
         try
         {
             var completed = await _apiClient.CompleteAsync();
+            if (completed is null)
+            {
+                RoomLabel.Text = "No called ticket to complete.";
+                await RefreshDisplaySafelyAsync();
+                return;
+            }
+
             var next = await _apiClient.CallNextAsync();
             NowCallingLabel.Text = next ?? "-";
             RoomLabel.Text = next is not null
                 ? $"Completed {completed}. Calling {next}."
-                : completed is not null
-                    ? $"Completed {completed}. No waiting tickets."
-                    : "No called ticket to complete.";
+                : $"Completed {completed}. No waiting tickets.";
             if (next is not null)
             {
                 _ = AnnounceTicketOnceAsync(next);
@@ -187,17 +210,30 @@ public partial class DoctorWindow : Window
         }
         catch (Exception ex)
         {
-            RoomLabel.Text = "API offline. Complete was not synced.";
+            RoomLabel.Text = "Complete failed. API is unavailable.";
             System.Diagnostics.Debug.WriteLine($"Complete Error: {ex.Message}");
         }
         finally
         {
-            // Re-enable the clicked button
-            if (clickedButton != null)
-            {
-                clickedButton.IsEnabled = true;
-            }
+            LeaveAction();
         }
+    }
+
+    private async Task<bool> TryEnterActionAsync()
+    {
+        if (!await _actionLock.WaitAsync(0)) return false;
+        CallNextButton.IsEnabled = false;
+        RecallButton.IsEnabled = false;
+        CompleteButton.IsEnabled = false;
+        return true;
+    }
+
+    private void LeaveAction()
+    {
+        CallNextButton.IsEnabled = true;
+        RecallButton.IsEnabled = true;
+        CompleteButton.IsEnabled = true;
+        _actionLock.Release();
     }
 
     private Task AnnounceTicketOnceAsync(string ticket)
@@ -234,6 +270,8 @@ public partial class DoctorWindow : Window
         _clockTimer.Stop();
         _queueRefreshTimer.Stop();
         await _apiClient.DisposeAsync();
+        _actionLock.Dispose();
+        _refreshLock.Dispose();
         base.OnClosed(e);
     }
 }

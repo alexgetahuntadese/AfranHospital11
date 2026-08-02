@@ -37,35 +37,17 @@ public sealed class QueueApiClient : IAsyncDisposable
 
     public async Task<string?> CallNextAsync()
     {
-        var response = await _httpClient.PostAsync("/api/queue/registration/call-next", null);
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
-
-        return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
+        return await PostQueueActionAsync("/api/queue/registration/call-next");
     }
 
     public async Task<string?> CompleteAsync()
     {
-        var response = await _httpClient.PostAsync("/api/queue/registration/complete", null);
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
-
-        return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
+        return await PostQueueActionAsync("/api/queue/registration/complete");
     }
 
     public async Task<string?> RecallCurrentAsync()
     {
-        var response = await _httpClient.PostAsync("/api/queue/registration/recall", null);
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
-
-        return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
+        return await PostQueueActionAsync("/api/queue/registration/recall");
     }
 
     public async Task<QueueDisplay?> GetDisplayAsync()
@@ -87,6 +69,22 @@ public sealed class QueueApiClient : IAsyncDisposable
         }
 
         await _hubConnection.StartAsync();
+    }
+
+    private async Task<string?> PostQueueActionAsync(string endpoint)
+    {
+        using var response = await _httpClient.PostAsync(endpoint, null);
+
+        // A missing ticket is a valid queue state, not an API outage. Other
+        // failures must remain exceptions so the doctor screen does not make
+        // up a local ticket for an unsynced operation.
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
+        response.EnsureSuccessStatusCode();
+        return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
     }
 
     public async ValueTask DisposeAsync()
