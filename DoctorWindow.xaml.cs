@@ -35,7 +35,10 @@ public partial class DoctorWindow : Window
     {
         try
         {
-            await RefreshDisplayAsync();
+            // Do not keep the action buttons disabled while the follow-up
+            // display refresh is waiting on the network. The call itself has
+            // already completed successfully at this point.
+            _ = RefreshDisplaySafelyAsync();
             await _apiClient.ConnectHubAsync(display =>
             {
                 Dispatcher.Invoke(() => ApplyDisplay(display));
@@ -82,7 +85,9 @@ public partial class DoctorWindow : Window
     {
         try
         {
-            await RefreshDisplayAsync();
+            // Refresh the queue in the background so Complete and Call Next
+            // buttons are re-enabled as soon as the action has completed.
+            _ = RefreshDisplaySafelyAsync();
         }
         catch (Exception ex)
         {
