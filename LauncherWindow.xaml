@@ -1,0 +1,114 @@
+<Window x:Class="AfranHospitalKiosk.LauncherWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Afran Hospital · System Launcher"
+        Width="1080" Height="720" MinWidth="900" MinHeight="620"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F7FB">
+    <Window.Resources>
+        <SolidColorBrush x:Key="Ink" Color="#122033"/>
+        <SolidColorBrush x:Key="Muted" Color="#64748B"/>
+        <SolidColorBrush x:Key="Blue" Color="#2563EB"/>
+        <SolidColorBrush x:Key="Green" Color="#059669"/>
+        <SolidColorBrush x:Key="Red" Color="#DC2626"/>
+        <SolidColorBrush x:Key="Line" Color="#E2E8F0"/>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="18,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="42">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,28">
+            <StackPanel>
+                <TextBlock Text="AFRAN HOSPITAL" FontSize="13" FontWeight="Bold" Foreground="{StaticResource Blue}"/>
+                <TextBlock Text="Queue System Launcher" FontSize="34" FontWeight="Bold" Foreground="{StaticResource Ink}" Margin="0,4,0,0"/>
+                <TextBlock Text="Start and monitor every station from one place." FontSize="15" Foreground="{StaticResource Muted}" Margin="0,6,0,0"/>
+            </StackPanel>
+            <Border HorizontalAlignment="Right" VerticalAlignment="Top" Background="#DBEAFE" CornerRadius="18" Padding="14,8">
+                <TextBlock Text="DEPLOYMENT CONTROL" FontSize="11" FontWeight="Bold" Foreground="#1D4ED8"/>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,22">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Ellipse x:Name="ApiStatusDot" Width="12" Height="12" Fill="#94A3B8" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Queue API" FontSize="17" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
+                    <TextBlock x:Name="ApiStatusText" Text="Not checked" FontSize="13" Foreground="{StaticResource Muted}" Margin="0,2,0,0"/>
+                </StackPanel>
+                <TextBox x:Name="ApiUrlBox" Grid.Column="2" Width="220" Text="http://localhost:5000" VerticalContentAlignment="Center" ToolTip="API address used by the modules"/>
+                <Button x:Name="ApiButton" Grid.Column="3" Content="Start API" Background="{StaticResource Green}" Click="ApiButton_Click" Margin="12,0,0,0"/>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,0,12,0">
+                <StackPanel>
+                    <TextBlock Text="01" FontSize="12" FontWeight="Bold" Foreground="{StaticResource Blue}"/>
+                    <TextBlock Text="Patient Kiosk" FontSize="21" FontWeight="Bold" Foreground="{StaticResource Ink}" Margin="0,12,0,4"/>
+                    <TextBlock Text="Language selection, gender selection, ticket printing." TextWrapping="Wrap" Height="42" Foreground="{StaticResource Muted}"/>
+                    <TextBlock x:Name="KioskStatus" Text="Stopped" Foreground="{StaticResource Muted}" Margin="0,22,0,12"/>
+                    <Button Content="Launch Kiosk" Background="{StaticResource Blue}" Click="LaunchKiosk_Click"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="12" Padding="24" Margin="6,0">
+                <StackPanel>
+                    <TextBlock Text="02" FontSize="12" FontWeight="Bold" Foreground="#7C3AED"/>
+                    <TextBlock Text="Doctor Station" FontSize="21" FontWeight="Bold" Foreground="{StaticResource Ink}" Margin="0,12,0,4"/>
+                    <TextBlock Text="Call next patients, recall tickets, and complete visits." TextWrapping="Wrap" Height="42" Foreground="{StaticResource Muted}"/>
+                    <TextBlock x:Name="DoctorStatus" Text="Stopped" Foreground="{StaticResource Muted}" Margin="0,22,0,12"/>
+                    <Button Content="Launch Doctor" Background="#7C3AED" Click="LaunchDoctor_Click"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="12" Padding="24" Margin="12,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="03" FontSize="12" FontWeight="Bold" Foreground="#D97706"/>
+                    <TextBlock Text="Waiting Room TV" FontSize="21" FontWeight="Bold" Foreground="{StaticResource Ink}" Margin="0,12,0,4"/>
+                    <TextBlock Text="Show now-serving and waiting tickets with announcements." TextWrapping="Wrap" Height="42" Foreground="{StaticResource Muted}"/>
+                    <TextBlock x:Name="TvStatus" Text="Stopped" Foreground="{StaticResource Muted}" Margin="0,22,0,12"/>
+                    <Button Content="Launch TV" Background="#D97706" Click="LaunchTv_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="3" Margin="0,28,0,0">
+            <TextBlock Text="Tip: start Queue API first when running all modules on this computer." VerticalAlignment="Center" Foreground="{StaticResource Muted}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Start All" Background="{StaticResource Green}" Click="StartAll_Click"/>
+                <Button Content="Stop All" Background="{StaticResource Red}" Click="StopAll_Click" Margin="0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

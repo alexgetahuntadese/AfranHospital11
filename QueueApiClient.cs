@@ -13,7 +13,17 @@ public sealed class QueueApiClient : IAsyncDisposable
     {
         BaseUrl = Environment.GetEnvironmentVariable("AFRAN_QUEUE_API")?.TrimEnd('/')
             ?? "http://localhost:5000";
-        _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
+        _httpClient = new HttpClient
+        {
+            BaseAddress = new Uri(BaseUrl),
+            Timeout = TimeSpan.FromSeconds(15)
+        };
+
+        var apiKey = Environment.GetEnvironmentVariable("AFRAN_QUEUE_API_KEY");
+        if (!string.IsNullOrWhiteSpace(apiKey))
+        {
+            _httpClient.DefaultRequestHeaders.Add("X-Api-Key", apiKey.Trim());
+        }
     }
 
     public string BaseUrl { get; }

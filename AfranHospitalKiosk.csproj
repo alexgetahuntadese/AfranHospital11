@@ -6,7 +6,22 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
+    <EnableDefaultApplicationDefinition>true</EnableDefaultApplicationDefinition>
+    <EnableDefaultPageItems>true</EnableDefaultPageItems>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Keep code-behind and XAML explicitly paired so clean/CI builds always
+         run the WPF markup compiler for newly added windows. -->
+    <Page Update="LauncherWindow.xaml;ServerManagerWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Update="LauncherWindow.xaml.cs;ServerManagerWindow.xaml.cs">
+      <DependentUpon>$([System.String]::Copy('%(Filename)')).xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\afranlogo.png">

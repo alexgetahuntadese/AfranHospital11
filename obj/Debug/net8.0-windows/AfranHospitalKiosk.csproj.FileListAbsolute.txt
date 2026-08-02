@@ -2146,3 +2146,5 @@ C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\refint\AfranHospi
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\AfranHospitalKiosk.pdb
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\AfranHospitalKiosk.genruntimeconfig.cache
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\ref\AfranHospitalKiosk.dll
+C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\LauncherWindow.baml
+C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\LauncherWindow.g.cs

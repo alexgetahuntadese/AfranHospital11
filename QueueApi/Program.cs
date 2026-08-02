@@ -1,28 +1,78 @@
+using System.Net;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseUrls(builder.Configuration["Urls"] ?? "http://0.0.0.0:5000");
+builder.Logging.AddSimpleConsole(options =>
+{
+    options.TimestampFormat = "yyyy-MM-ddTHH:mm:ss.fff'Z' ";
+    options.SingleLine = true;
+});
+builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<QueueDb>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("QueueDb") ?? "Data Source=SQLite.db"));
+    options.UseSqlite(
+        builder.Configuration.GetConnectionString("QueueDb") ?? "Data Source=SQLite.db",
+        sqlite => sqlite.CommandTimeout(30)));
 builder.Services.AddSignalR();
+builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("queue-mutations", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 120,
+            Window = TimeSpan.FromMinutes(1),
+            QueueLimit = 0,
+            AutoReplenishment = true
+        }));
+});
+
+var configuredOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-        policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(origin =>
+    options.AddPolicy("lan-clients", policy =>
+    {
+        policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+        if (configuredOrigins.Length > 0)
         {
-            // Allow localhost for development and LAN IPs for deployment
-            if (string.IsNullOrEmpty(origin)) return true;
-            if (origin.Contains("localhost") || origin.Contains("127.0.0.1")) return true;
-            if (origin.StartsWith("http://192.168.") || origin.StartsWith("http://10.")) return true;
-            return false;
-        }));
+            policy.WithOrigins(configuredOrigins);
+        }
+        else
+        {
+            policy.SetIsOriginAllowed(IsAllowedLanOrigin);
+        }
+    });
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
+app.UseRateLimiter();
+var configuredApiKey = builder.Configuration["Security:ApiKey"]?.Trim();
+app.Use(async (context, next) =>
+{
+    if (!string.IsNullOrWhiteSpace(configuredApiKey) &&
+        context.Request.Path.StartsWithSegments("/api") &&
+        !HttpMethods.IsGet(context.Request.Method) &&
+        !HttpMethods.IsHead(context.Request.Method) &&
+        !string.Equals(context.Request.Headers["X-Api-Key"], configuredApiKey, StringComparison.Ordinal))
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsJsonAsync(new { message = "A valid X-Api-Key is required." });
+        return;
+    }
+
+    await next();
+});
 
 using (var scope = app.Services.CreateScope())
 {
@@ -30,21 +80,40 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-app.UseCors();
-app.UseSwagger();
-app.UseSwaggerUI();
+app.UseCors("lan-clients");
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.MapGet("/", () => Results.Ok(new { service = "Afran Queue API", status = "Running" }));
+app.MapHealthChecks("/health/live");
+app.MapGet("/health/ready", async (QueueDb db, CancellationToken cancellationToken) =>
+{
+    var healthy = await db.Database.CanConnectAsync(cancellationToken);
+    return healthy
+        ? Results.Ok(new { status = "Ready" })
+        : Results.StatusCode(StatusCodes.Status503ServiceUnavailable);
+});
 
 app.MapPost("/api/tickets", async (
     CreateTicketRequest request,
     QueueDb db,
-    IHubContext<QueueHub> hub) =>
+    IHubContext<QueueHub> hub,
+    ILogger<Program> logger,
+    CancellationToken cancellationToken) =>
 {
+    if (request is null || request.Language?.Length > 50)
+    {
+        return Results.BadRequest(new { message = "Language must be 50 characters or fewer." });
+    }
+
     var gender = NormalizeGender(request.Gender);
     var language = string.IsNullOrWhiteSpace(request.Language) ? "English" : request.Language.Trim();
     var prefix = gender.Equals("Male", StringComparison.OrdinalIgnoreCase) ? "M" : "F";
-    var nextNumber = await db.Tickets.CountAsync(t => t.Prefix == prefix) + 1;
+    await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+    var nextNumber = await db.Tickets.CountAsync(t => t.Prefix == prefix, cancellationToken) + 1;
     var ticketCode = $"{prefix}{nextNumber:000}";
 
     var ticket = new Ticket
@@ -59,21 +128,23 @@ app.MapPost("/api/tickets", async (
 
     db.Tickets.Add(ticket);
     db.QueueEvents.Add(QueueEvent.Created(ticketCode));
-    await db.SaveChangesAsync();
+    await db.SaveChangesAsync(cancellationToken);
+    await transaction.CommitAsync(cancellationToken);
+    logger.LogInformation("Ticket {TicketCode} created with prefix {Prefix}.", ticketCode, prefix);
 
     var display = await QueueDisplay.Load(db);
     await hub.Clients.All.SendAsync("TicketCreated", TicketDto.From(ticket));
     await hub.Clients.All.SendAsync("QueueUpdated", display);
 
     return Results.Ok(new TicketResponse(ticket.TicketCode));
-});
+}).RequireRateLimiting("queue-mutations");
 
-app.MapPost("/api/queue/registration/call-next", async (QueueDb db, IHubContext<QueueHub> hub) =>
+app.MapPost("/api/queue/registration/call-next", async (QueueDb db, IHubContext<QueueHub> hub, ILogger<Program> logger, CancellationToken cancellationToken) =>
 {
     var waiting = await db.Tickets
         .Where(t => t.Status == TicketStatus.Waiting)
         .OrderBy(t => t.CreatedAt)
-        .FirstOrDefaultAsync();
+        .FirstOrDefaultAsync(cancellationToken);
 
     if (waiting is null)
     {
@@ -83,7 +154,7 @@ app.MapPost("/api/queue/registration/call-next", async (QueueDb db, IHubContext<
     var calledAt = DateTime.UtcNow;
     var previouslyCalled = await db.Tickets
         .Where(t => t.Status == TicketStatus.Called)
-        .ToListAsync();
+        .ToListAsync(cancellationToken);
     foreach (var ticket in previouslyCalled)
     {
         ticket.Status = TicketStatus.Completed;
@@ -94,21 +165,22 @@ app.MapPost("/api/queue/registration/call-next", async (QueueDb db, IHubContext<
     waiting.Status = TicketStatus.Called;
     waiting.CalledAt = calledAt;
     db.QueueEvents.Add(QueueEvent.Called(waiting.TicketCode));
-    await db.SaveChangesAsync();
+    await db.SaveChangesAsync(cancellationToken);
+    logger.LogInformation("Ticket {TicketCode} called for registration.", waiting.TicketCode);
 
     var display = await QueueDisplay.Load(db);
     await hub.Clients.All.SendAsync("TicketCalled", TicketDto.From(waiting));
     await hub.Clients.All.SendAsync("QueueUpdated", display);
 
     return Results.Ok(new TicketResponse(waiting.TicketCode));
-});
+}).RequireRateLimiting("queue-mutations");
 
-app.MapPost("/api/queue/registration/complete", async (QueueDb db, IHubContext<QueueHub> hub) =>
+app.MapPost("/api/queue/registration/complete", async (QueueDb db, IHubContext<QueueHub> hub, ILogger<Program> logger, CancellationToken cancellationToken) =>
 {
     var called = await db.Tickets
         .Where(t => t.Status == TicketStatus.Called)
         .OrderByDescending(t => t.CalledAt)
-        .FirstOrDefaultAsync();
+        .FirstOrDefaultAsync(cancellationToken);
 
     if (called is null)
     {
@@ -118,21 +190,22 @@ app.MapPost("/api/queue/registration/complete", async (QueueDb db, IHubContext<Q
     called.Status = TicketStatus.Completed;
     called.CompletedAt = DateTime.UtcNow;
     db.QueueEvents.Add(QueueEvent.Completed(called.TicketCode));
-    await db.SaveChangesAsync();
+    await db.SaveChangesAsync(cancellationToken);
+    logger.LogInformation("Ticket {TicketCode} completed.", called.TicketCode);
 
     var display = await QueueDisplay.Load(db);
     await hub.Clients.All.SendAsync("TicketCompleted", TicketDto.From(called));
     await hub.Clients.All.SendAsync("QueueUpdated", display);
 
     return Results.Ok(new TicketResponse(called.TicketCode));
-});
+}).RequireRateLimiting("queue-mutations");
 
-app.MapPost("/api/queue/registration/recall", async (QueueDb db, IHubContext<QueueHub> hub) =>
+app.MapPost("/api/queue/registration/recall", async (QueueDb db, IHubContext<QueueHub> hub, ILogger<Program> logger, CancellationToken cancellationToken) =>
 {
     var called = await db.Tickets
         .Where(t => t.Status == TicketStatus.Called)
         .OrderByDescending(t => t.CalledAt)
-        .FirstOrDefaultAsync();
+        .FirstOrDefaultAsync(cancellationToken);
 
     if (called is null)
     {
@@ -140,11 +213,12 @@ app.MapPost("/api/queue/registration/recall", async (QueueDb db, IHubContext<Que
     }
 
     var display = await QueueDisplay.Load(db);
+    logger.LogInformation("Ticket {TicketCode} recalled.", called.TicketCode);
     await hub.Clients.All.SendAsync("TicketCalled", TicketDto.From(called));
     await hub.Clients.All.SendAsync("QueueUpdated", display);
 
     return Results.Ok(new TicketResponse(called.TicketCode));
-});
+}).RequireRateLimiting("queue-mutations");
 
 app.MapGet("/api/queue/registration/display", async (QueueDb db) =>
 {
@@ -154,6 +228,22 @@ app.MapGet("/api/queue/registration/display", async (QueueDb db) =>
 app.MapHub<QueueHub>("/queueHub");
 
 app.Run();
+
+static bool IsAllowedLanOrigin(string origin)
+{
+    if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri) || uri.Scheme is not ("http" or "https"))
+    {
+        return false;
+    }
+
+    if (uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase)) return true;
+    if (!IPAddress.TryParse(uri.Host, out var address)) return false;
+    if (IPAddress.IsLoopback(address)) return true;
+
+    var bytes = address.GetAddressBytes();
+    return address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
+           (bytes[0] == 10 || (bytes[0] == 172 && bytes[1] is >= 16 and <= 31) || (bytes[0] == 192 && bytes[1] == 168));
+}
 
 static string NormalizeGender(string? gender)
 {
@@ -236,7 +326,6 @@ public sealed record QueueDisplay(TicketDto? NowServing, IReadOnlyList<TicketDto
         var waiting = await db.Tickets
             .Where(t => t.Status == TicketStatus.Waiting)
             .OrderBy(t => t.CreatedAt)
-            .Take(6)
             .ToListAsync();
 
         var waitingCount = await db.Tickets.CountAsync(t => t.Status == TicketStatus.Waiting);

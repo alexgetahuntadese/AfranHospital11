@@ -9,6 +9,7 @@ namespace AfranHospitalKiosk;
 public partial class DoctorWindow : Window
 {
     private readonly DispatcherTimer _clockTimer = new() { Interval = TimeSpan.FromSeconds(1) };
+    private readonly DispatcherTimer _queueRefreshTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private readonly QueueApiClient _apiClient = new();
     private readonly AmharicTicketAnnouncer _announcer = new();
     private int _fallbackTicket = 105;
@@ -19,6 +20,9 @@ public partial class DoctorWindow : Window
         _clockTimer.Tick += (_, _) => UpdateClock();
         _clockTimer.Start();
         UpdateClock();
+
+        _queueRefreshTimer.Tick += async (_, _) => await RefreshDisplayAsync();
+        _queueRefreshTimer.Start();
         
         _ = ConnectApiAsync();
     }
@@ -66,35 +70,11 @@ public partial class DoctorWindow : Window
             RoomLabel.Text = "Doctor Room 3";
         }
 
-        SetQueueRow(1, display.Waiting.ElementAtOrDefault(0));
-        SetQueueRow(2, display.Waiting.ElementAtOrDefault(1));
-        SetQueueRow(3, display.Waiting.ElementAtOrDefault(2));
-    }
-
-    private void SetQueueRow(int row, TicketDto? ticket)
-    {
-        var ticketText = ticket?.Ticket ?? "-";
-        var languageText = ticket?.Language ?? "-";
-        var genderText = ticket?.Gender ?? "-";
-
-        switch (row)
-        {
-            case 1:
-                QueueTicket1.Text = ticketText;
-                QueueLanguage1.Text = languageText;
-                QueueGender1.Text = genderText;
-                break;
-            case 2:
-                QueueTicket2.Text = ticketText;
-                QueueLanguage2.Text = languageText;
-                QueueGender2.Text = genderText;
-                break;
-            case 3:
-                QueueTicket3.Text = ticketText;
-                QueueLanguage3.Text = languageText;
-                QueueGender3.Text = genderText;
-                break;
-        }
+        WaitingTicketsList.ItemsSource = display.Waiting;
+        WaitingCountLabel.Text = $"{display.WaitingCount} waiting";
+        WaitingEmptyLabel.Visibility = display.Waiting.Count == 0
+            ? Visibility.Visible
+            : Visibility.Collapsed;
     }
 
     private void UpdateClock()
@@ -228,6 +208,8 @@ public partial class DoctorWindow : Window
 
     protected override async void OnClosed(EventArgs e)
     {
+        _clockTimer.Stop();
+        _queueRefreshTimer.Stop();
         await _apiClient.DisposeAsync();
         base.OnClosed(e);
     }

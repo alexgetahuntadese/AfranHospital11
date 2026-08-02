@@ -2271,7 +2271,6 @@ C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\created
 C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\hostfxr.dll
 C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\hostpolicy.dll
 C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\mscordaccore.dll
-C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\mscordaccore_amd64_amd64_8.0.2826.26413.dll
 C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\mscordbi.dll
 C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\mscorrc.dll
 C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\msquic.dll
@@ -2511,3 +2510,6 @@ C:\Users\USER\Desktop\AfranHospital11\obj\Release\net8.0-windows\win-x64\TvWindo
 C:\Users\USER\Desktop\AfranHospital11\obj\Release\net8.0-windows\win-x64\AfranHospitalKiosk_Content.g.cs
 C:\Users\USER\Desktop\AfranHospital11\obj\Release\net8.0-windows\win-x64\AfranHospitalKiosk.sourcelink.json
 C:\Users\USER\Desktop\AfranHospital11\obj\Release\net8.0-windows\win-x64\AfranHos.FFF765B2.Up2Date
+C:\Users\USER\Desktop\AfranHospital11\bin\Release\net8.0-windows\win-x64\mscordaccore_amd64_amd64_8.0.2926.32403.dll
+C:\Users\USER\Desktop\AfranHospital11\obj\Release\net8.0-windows\win-x64\LauncherWindow.baml
+C:\Users\USER\Desktop\AfranHospital11\obj\Release\net8.0-windows\win-x64\LauncherWindow.g.cs

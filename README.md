@@ -8,10 +8,15 @@ Fullscreen WPF desktop screens for a LAN-deployed registration queue:
 
 ## Run Modes
 
+The normal deployment entry point is the launcher. Run `AfranHospitalKiosk.exe`
+without arguments to open one control panel for Queue API, Kiosk, Doctor, and TV.
+Direct module modes are still available for dedicated machines:
+
 ```powershell
-dotnet run
+dotnet run                 # launcher UI
 dotnet run -- doctor
 dotnet run -- tv
+dotnet run -- kiosk
 ```
 
 Press `Esc` to close a window during testing.
@@ -28,6 +33,23 @@ The API listens on:
 http://0.0.0.0:5000
 ```
 
+Operational endpoints:
+
+```text
+GET /health/live     process liveness
+GET /health/ready    database readiness
+```
+
+For a protected LAN deployment, set `Security:ApiKey` in
+`QueueApi\appsettings.json` (or the `Security__ApiKey` environment variable)
+and set the same value as `AFRAN_QUEUE_API_KEY` on every desktop client. The
+API then requires `X-Api-Key` for queue-changing requests. Keep the key out of
+source control and deployment documentation.
+
+Browser-based clients should list their exact origins under
+`Cors:AllowedOrigins`; when the list is empty, only localhost and private LAN
+origins are accepted.
+
 On kiosk/doctor/TV machines, set the API address before launching:
 
 ```powershell
@@ -43,6 +65,20 @@ $env:AFRAN_QUEUE_API="http://192.168.1.10:5000"
 dotnet build
 dotnet publish -c Release -r win-x64 --self-contained false
 ```
+
+## Deploy Now
+
+Create a ready-to-copy Windows deployment folder with a self-contained desktop
+launcher and API:
+
+```powershell
+.\deploy-now.ps1
+```
+
+Then copy the generated `release` folder and run
+`release\Start-AfranHospital.bat`. The launcher automatically uses the
+published `QueueApi\QueueApi.exe` next to the desktop application, so a .NET
+installation is not required.
 
 ## LAN Deployment Architecture
 
