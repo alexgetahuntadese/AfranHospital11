@@ -17,6 +17,7 @@ public partial class DoctorWindow : Window
     private readonly SemaphoreSlim _refreshLock = new(1, 1);
     private string? _lastAnnouncedTicket;
     private DateTime _lastAnnouncementUtc;
+    private TicketDto? _currentTicket;
 
     public DoctorWindow()
     {
@@ -45,8 +46,9 @@ public partial class DoctorWindow : Window
                 {
                     NowCallingLabel.Text = ticket.Ticket;
                     RoomLabel.Text = "Doctor Room 3";
+                    _currentTicket = ticket;
                 });
-                _ = AnnounceTicketOnceAsync(ticket.Ticket);
+                _ = AnnounceTicketOnceAsync(ticket);
             });
             RoomLabel.Text = displayRoomText();
         }
@@ -96,6 +98,7 @@ public partial class DoctorWindow : Window
     private void ApplyDisplay(QueueDisplay display)
     {
         NowCallingLabel.Text = display.NowServing?.Ticket ?? "-";
+        _currentTicket = display.NowServing;
         if (display.NowServing is not null)
         {
             RoomLabel.Text = "Doctor Room 3";
@@ -122,11 +125,12 @@ public partial class DoctorWindow : Window
         try
         {
             var ticket = await _apiClient.CallNextAsync();
-            NowCallingLabel.Text = ticket ?? "-";
+            NowCallingLabel.Text = ticket?.Ticket ?? "-";
             RoomLabel.Text = ticket is null ? "No waiting tickets." : "Doctor Room 3";
             if (ticket is not null)
             {
                 _ = AnnounceTicketOnceAsync(ticket);
+                _currentTicket = ticket;
             }
 
             // Do not keep the action buttons disabled while the follow-up
@@ -174,6 +178,7 @@ public partial class DoctorWindow : Window
                 : $"Recalling {recalled}.";
             if (recalled is not null)
             {
+                _currentTicket = recalled;
                 _ = AnnounceTicketOnceAsync(recalled);
             }
         }
@@ -199,12 +204,13 @@ public partial class DoctorWindow : Window
             }
 
             var next = await _apiClient.CallNextAsync();
-            NowCallingLabel.Text = next ?? "-";
+            NowCallingLabel.Text = next?.Ticket ?? "-";
             RoomLabel.Text = next is not null
-                ? $"Completed {completed}. Calling {next}."
+                ? $"Completed {completed.Ticket}. Calling {next.Ticket}."
                 : $"Completed {completed}. No waiting tickets.";
             if (next is not null)
             {
+                _currentTicket = next;
                 _ = AnnounceTicketOnceAsync(next);
             }
 
@@ -240,24 +246,24 @@ public partial class DoctorWindow : Window
         _actionLock.Release();
     }
 
-    private Task AnnounceTicketOnceAsync(string ticket)
+    private Task AnnounceTicketOnceAsync(TicketDto ticket)
     {
         lock (_announcementLock)
         {
-            if (string.Equals(_lastAnnouncedTicket, ticket, StringComparison.OrdinalIgnoreCase) &&
+            if (string.Equals(_lastAnnouncedTicket, ticket.Ticket, StringComparison.OrdinalIgnoreCase) &&
                 DateTime.UtcNow - _lastAnnouncementUtc < TimeSpan.FromSeconds(10))
             {
                 return Task.CompletedTask;
             }
 
-            _lastAnnouncedTicket = ticket;
+            _lastAnnouncedTicket = ticket.Ticket;
             _lastAnnouncementUtc = DateTime.UtcNow;
         }
 
         // AmharicTicketAnnouncer intentionally plays one announcement and one
         // repeat (two plays total). This guard prevents the local API response
         // and the SignalR TicketCalled event from announcing the same ticket twice.
-        return _announcer.AnnounceAsync(ticket);
+        return _announcer.AnnounceAsync(ticket.Ticket, ticket.Language);
     }
 
 

@@ -35,17 +35,17 @@ public sealed class QueueApiClient : IAsyncDisposable
         return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
     }
 
-    public async Task<string?> CallNextAsync()
+    public async Task<TicketDto?> CallNextAsync()
     {
         return await PostQueueActionAsync("/api/queue/registration/call-next");
     }
 
-    public async Task<string?> CompleteAsync()
+    public async Task<TicketDto?> CompleteAsync()
     {
         return await PostQueueActionAsync("/api/queue/registration/complete");
     }
 
-    public async Task<string?> RecallCurrentAsync()
+    public async Task<TicketDto?> RecallCurrentAsync()
     {
         return await PostQueueActionAsync("/api/queue/registration/recall");
     }
@@ -71,7 +71,7 @@ public sealed class QueueApiClient : IAsyncDisposable
         await _hubConnection.StartAsync();
     }
 
-    private async Task<string?> PostQueueActionAsync(string endpoint)
+    private async Task<TicketDto?> PostQueueActionAsync(string endpoint)
     {
         using var response = await _httpClient.PostAsync(endpoint, null);
 
@@ -84,7 +84,10 @@ public sealed class QueueApiClient : IAsyncDisposable
         }
 
         response.EnsureSuccessStatusCode();
-        return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
+        var result = await response.Content.ReadFromJsonAsync<TicketResponse>();
+        return result is null
+            ? null
+            : new TicketDto(result.Ticket, result.Gender, result.Language, result.Status, result.CreatedAt);
     }
 
     public async ValueTask DisposeAsync()
@@ -98,7 +101,7 @@ public sealed class QueueApiClient : IAsyncDisposable
     }
 
     private sealed record CreateTicketRequest(string Gender, string Language);
-    private sealed record TicketResponse(string Ticket);
+    private sealed record TicketResponse(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt);
 }
 
 public sealed record TicketDto(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt)

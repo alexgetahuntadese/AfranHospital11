@@ -20,9 +20,10 @@ public sealed class AmharicTicketAnnouncer
 
     public bool IsReady => Directory.Exists(_voiceRoot);
 
-    public async Task AnnounceAsync(string? ticket)
+    public async Task AnnounceAsync(string? ticket, string? language = null)
     {
-        var audioPath = FindTicketAudio(ticket);
+        var audioRoot = FindVoiceRoot(language);
+        var audioPath = FindTicketAudio(ticket, audioRoot);
         if (audioPath is null)
         {
             return;
@@ -37,7 +38,7 @@ public sealed class AmharicTicketAnnouncer
                 if (repeat + 1 < RepeatCount)
                 {
                     await Task.Delay(RepeatDelay);
-                    var repeatAudio = FindRepeatAudio(ticket);
+                    var repeatAudio = FindRepeatAudio(ticket, audioRoot);
                     if (repeatAudio is not null)
                     {
                         await PlayAudioFileAsync(repeatAudio);
@@ -58,7 +59,7 @@ public sealed class AmharicTicketAnnouncer
         }
     }
 
-    private string? FindTicketAudio(string? ticket)
+    private static string? FindTicketAudio(string? ticket, string voiceRoot)
     {
         if (string.IsNullOrWhiteSpace(ticket) || ticket == "-")
         {
@@ -68,7 +69,7 @@ public sealed class AmharicTicketAnnouncer
         var safeTicket = SafeFilePart(ticket.Trim().ToUpperInvariant());
         foreach (var extension in new[] { ".wav", ".mp3" })
         {
-            var exactTicketAudio = Path.Combine(_voiceRoot, $"{safeTicket}{extension}");
+            var exactTicketAudio = Path.Combine(voiceRoot, $"{safeTicket}{extension}");
             if (File.Exists(exactTicketAudio))
             {
                 return exactTicketAudio;
@@ -78,7 +79,7 @@ public sealed class AmharicTicketAnnouncer
         return null;
     }
 
-    private string? FindRepeatAudio(string? ticket)
+    private string? FindRepeatAudio(string? ticket, string voiceRoot)
     {
         var voice = "female";
         if (!string.IsNullOrWhiteSpace(ticket)
@@ -87,19 +88,20 @@ public sealed class AmharicTicketAnnouncer
             voice = manifestVoice;
         }
 
-        var preferred = Path.Combine(_voiceRoot, $"repeat-{voice}.mp3");
+        var preferred = Path.Combine(voiceRoot, $"repeat-{voice}.mp3");
         if (File.Exists(preferred))
         {
             return preferred;
         }
 
-        var fallback = Path.Combine(_voiceRoot, "repeat-female.mp3");
+        var fallback = Path.Combine(voiceRoot, "repeat-female.mp3");
         return File.Exists(fallback) ? fallback : null;
     }
 
-    private static string FindVoiceRoot()
+    private static string FindVoiceRoot(string? language = null)
     {
-        var candidates = FindCandidateRoots().ToList();
+        var folder = IsOromo(language) ? "Oromo" : "Amharic";
+        var candidates = FindCandidateRoots(folder).ToList();
 
         var readyPath = candidates.FirstOrDefault(Directory.Exists);
         if (readyPath is not null)
@@ -107,21 +109,25 @@ public sealed class AmharicTicketAnnouncer
             return readyPath;
         }
 
-        return Path.Combine(AppContext.BaseDirectory, "Assets", "Voices", "Amharic");
+        return Path.Combine(AppContext.BaseDirectory, "Assets", "Voices", folder);
     }
 
-    private static IEnumerable<string> FindCandidateRoots()
+    private static IEnumerable<string> FindCandidateRoots(string folder)
     {
         foreach (var basePath in new[] { AppContext.BaseDirectory, Environment.CurrentDirectory })
         {
             var directory = new DirectoryInfo(basePath);
             while (directory is not null)
             {
-                yield return Path.Combine(directory.FullName, "Assets", "Voices", "Amharic");
+                yield return Path.Combine(directory.FullName, "Assets", "Voices", folder);
                 directory = directory.Parent;
             }
         }
     }
+
+    private static bool IsOromo(string? language) =>
+        language?.Trim().Equals("Oromo", StringComparison.OrdinalIgnoreCase) == true
+        || language?.Trim().Equals("Afaan Oromo", StringComparison.OrdinalIgnoreCase) == true;
 
     private static string SafeFilePart(string value)
     {

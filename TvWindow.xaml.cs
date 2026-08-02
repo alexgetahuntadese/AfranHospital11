@@ -83,7 +83,7 @@ public partial class TvWindow : Window
                     RoomTicket3.Text = ticket.Ticket;
                     RoomDisplayLabel.Text = $"GO TO ROOM {RoomFor(ticket)}";
                 });
-                _ = _announcer.AnnounceAsync(ticket.Ticket);
+                _ = _announcer.AnnounceAsync(ticket.Ticket, ticket.Language);
             });
         }
         catch (Exception ex)

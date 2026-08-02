@@ -136,7 +136,7 @@ app.MapPost("/api/tickets", async (
     await hub.Clients.All.SendAsync("TicketCreated", TicketDto.From(ticket));
     await hub.Clients.All.SendAsync("QueueUpdated", display);
 
-    return Results.Ok(new TicketResponse(ticket.TicketCode));
+    return Results.Ok(TicketResponse.From(ticket));
 }).RequireRateLimiting("queue-mutations");
 
 app.MapPost("/api/queue/registration/call-next", async (QueueDb db, IHubContext<QueueHub> hub, ILogger<Program> logger, CancellationToken cancellationToken) =>
@@ -172,7 +172,7 @@ app.MapPost("/api/queue/registration/call-next", async (QueueDb db, IHubContext<
     await hub.Clients.All.SendAsync("TicketCalled", TicketDto.From(waiting));
     await hub.Clients.All.SendAsync("QueueUpdated", display);
 
-    return Results.Ok(new TicketResponse(waiting.TicketCode));
+    return Results.Ok(TicketResponse.From(waiting));
 }).RequireRateLimiting("queue-mutations");
 
 app.MapPost("/api/queue/registration/complete", async (QueueDb db, IHubContext<QueueHub> hub, ILogger<Program> logger, CancellationToken cancellationToken) =>
@@ -197,7 +197,7 @@ app.MapPost("/api/queue/registration/complete", async (QueueDb db, IHubContext<Q
     await hub.Clients.All.SendAsync("TicketCompleted", TicketDto.From(called));
     await hub.Clients.All.SendAsync("QueueUpdated", display);
 
-    return Results.Ok(new TicketResponse(called.TicketCode));
+    return Results.Ok(TicketResponse.From(called));
 }).RequireRateLimiting("queue-mutations");
 
 app.MapPost("/api/queue/registration/recall", async (QueueDb db, IHubContext<QueueHub> hub, ILogger<Program> logger, CancellationToken cancellationToken) =>
@@ -217,7 +217,7 @@ app.MapPost("/api/queue/registration/recall", async (QueueDb db, IHubContext<Que
     await hub.Clients.All.SendAsync("TicketCalled", TicketDto.From(called));
     await hub.Clients.All.SendAsync("QueueUpdated", display);
 
-    return Results.Ok(new TicketResponse(called.TicketCode));
+    return Results.Ok(TicketResponse.From(called));
 }).RequireRateLimiting("queue-mutations");
 
 app.MapGet("/api/queue/registration/display", async (QueueDb db) =>
@@ -305,7 +305,11 @@ public static class TicketStatus
 }
 
 public sealed record CreateTicketRequest(string? Gender, string? Language);
-public sealed record TicketResponse(string Ticket);
+public sealed record TicketResponse(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt)
+{
+    public static TicketResponse From(Ticket ticket) =>
+        new(ticket.TicketCode, ticket.Gender, ticket.Language, ticket.Status, ticket.CreatedAt);
+}
 public sealed record TicketDto(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt)
 {
     public static TicketDto From(Ticket ticket)
