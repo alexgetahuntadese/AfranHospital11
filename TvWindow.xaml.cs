@@ -81,7 +81,7 @@ public partial class TvWindow : Window
                 {
                     NowServingLabel.Text = ticket.Ticket;
                     RoomTicket3.Text = ticket.Ticket;
-                    RoomDisplayLabel.Text = $"GO TO ROOM {RoomFor(ticket)}";
+                    RoomDisplayLabel.Text = $"GO TO GCC OPD ROOM {RoomFor(ticket)}";
                 });
                 _ = _announcer.AnnounceAsync(ticket.Ticket, ticket.Language);
             });
@@ -110,7 +110,7 @@ public partial class TvWindow : Window
         var nowServing = display.NowServing?.Ticket ?? "-";
         NowServingLabel.Text = nowServing;
         RoomTicket3.Text = nowServing;
-        RoomDisplayLabel.Text = $"GO TO ROOM {RoomFor(display.NowServing)}";
+        RoomDisplayLabel.Text = $"GO TO GCC OPD ROOM {RoomFor(display.NowServing)}";
 
         SetRoomTickets(display);
         SetQueueRows(display.Waiting);
@@ -172,7 +172,7 @@ public partial class TvWindow : Window
     {
         _fallbackTicket++;
         NowServingLabel.Text = $"M{_fallbackTicket:000}";
-        RoomDisplayLabel.Text = "GO TO ROOM 101";
+        RoomDisplayLabel.Text = "GO TO GCC OPD ROOM 101";
         RoomTicket1.Text = $"F{_fallbackTicket + 2:000}";
         RoomTicket2.Text = $"M{_fallbackTicket + 3:000}";
         RoomTicket3.Text = $"M{_fallbackTicket:000}";
