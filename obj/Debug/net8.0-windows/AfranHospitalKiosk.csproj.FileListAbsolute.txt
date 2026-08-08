@@ -748,3 +748,5 @@ C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\AfranHospitalKios
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\ref\AfranHospitalKiosk.dll
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\LauncherWindow.baml
 C:\Users\USER\Desktop\AfranHospital11\obj\Debug\net8.0-windows\LauncherWindow.g.cs
+C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\System.Speech.dll
+C:\Users\USER\Desktop\AfranHospital11\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Speech.dll
