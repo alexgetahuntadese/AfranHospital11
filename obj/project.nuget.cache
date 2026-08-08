@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "TilIZwkLcoQ=",
+  "dgSpecHash": "vie0VRzKL1Q=",
   "success": true,
   "projectFilePath": "C:\\Users\\USER\\Desktop\\AfranHospital11\\AfranHospitalKiosk.csproj",
   "expectedPackageFiles": [
@@ -19,6 +19,7 @@
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.options\\8.0.2\\microsoft.extensions.options.8.0.2.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\system.speech\\8.0.0\\system.speech.8.0.0.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\system.threading.channels\\8.0.0\\system.threading.channels.8.0.0.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.29\\microsoft.netcore.app.runtime.win-x64.8.0.29.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x86\\8.0.29\\microsoft.netcore.app.runtime.win-x86.8.0.29.nupkg.sha512",
