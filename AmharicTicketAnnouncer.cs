@@ -26,15 +26,17 @@ public sealed class AmharicTicketAnnouncer
         var audioRoot = FindVoiceRoot(language);
         var ticketAudio = FindTicketAudio(ticket, audioRoot);
         var cleanedRoomNumber = string.IsNullOrWhiteSpace(roomNumber) ? null : roomNumber.Trim();
+        var shouldUseTicketAudio = ticketAudio is not null && !ShouldSkipTicketAudioForRoomMismatch(ticket, cleanedRoomNumber, language);
+        var isEmbeddedLanguage = IsEmbeddedRoomInTicketAudio(language);
 
         await _speechLock.WaitAsync();
         try
         {
-            if (ticketAudio is not null)
+            if (shouldUseTicketAudio && !isEmbeddedLanguage)
             {
                 for (var repeat = 0; repeat < RepeatCount; repeat++)
                 {
-                    await PlayAudioFileAsync(ticketAudio);
+                    await PlayAudioFileAsync(ticketAudio!);
                     if (repeat + 1 < RepeatCount)
                     {
                         await Task.Delay(RepeatDelay);
@@ -43,15 +45,34 @@ public sealed class AmharicTicketAnnouncer
                         await Task.Delay(RepeatDelay);
                     }
                 }
-            }
-            else if (!string.IsNullOrWhiteSpace(ticket))
-            {
-                await SpeakTextAsync($"Ticket {ticket}");
+                return;
             }
 
-            if (!string.IsNullOrWhiteSpace(cleanedRoomNumber))
+            if (shouldUseTicketAudio && !string.IsNullOrWhiteSpace(cleanedRoomNumber) && isEmbeddedLanguage)
             {
-                await PlayRoomNumberAsync(cleanedRoomNumber, audioRoot);
+                await SpeakTextAsync(BuildFallbackAnnouncement(ticket, cleanedRoomNumber, language));
+                return;
+            }
+
+            if (shouldUseTicketAudio)
+            {
+                for (var repeat = 0; repeat < RepeatCount; repeat++)
+                {
+                    await PlayAudioFileAsync(ticketAudio!);
+                    if (repeat + 1 < RepeatCount)
+                    {
+                        await Task.Delay(RepeatDelay);
+                        var repeatAudio = FindRepeatAudio(ticket, audioRoot);
+                        await PlayAudioFileAsync(repeatAudio ?? ticketAudio);
+                        await Task.Delay(RepeatDelay);
+                    }
+                }
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(ticket))
+            {
+                await SpeakTextAsync(BuildFallbackAnnouncement(ticket, cleanedRoomNumber, language));
             }
         }
         catch (Exception ex)
@@ -105,18 +126,6 @@ public sealed class AmharicTicketAnnouncer
         return null;
     }
 
-    private static async Task PlayRoomNumberAsync(string roomNumber, string voiceRoot)
-    {
-        var roomAudio = FindRoomAudio(roomNumber, voiceRoot);
-        if (roomAudio is not null)
-        {
-            await PlayAudioFileAsync(roomAudio);
-            return;
-        }
-
-        await SpeakTextAsync($"Room {roomNumber}");
-    }
-
     private static string? FindRoomAudio(string roomNumber, string voiceRoot)
     {
         var safeRoom = SafeFilePart(roomNumber.ToUpperInvariant());
@@ -137,6 +146,89 @@ public sealed class AmharicTicketAnnouncer
 
         return null;
     }
+
+    private static async Task PlayRoomNumberAsync(string roomNumber, string voiceRoot, string? language = null)
+    {
+        var roomAudio = FindRoomAudio(roomNumber, voiceRoot);
+        if (roomAudio is not null)
+        {
+            await PlayAudioFileAsync(roomAudio);
+            return;
+        }
+
+        var roomPhrase = IsAmharic(language)
+            ? $"ክፍል {roomNumber}"
+            : IsOromo(language)
+                ? $"kutaa {roomNumber}"
+                : $"Room {roomNumber}";
+
+        await SpeakTextAsync(roomPhrase);
+    }
+
+    private static bool ShouldSkipTicketAudioForRoomMismatch(string? ticket, string? roomNumber, string? language)
+    {
+        if (string.IsNullOrWhiteSpace(ticket) || string.IsNullOrWhiteSpace(roomNumber))
+        {
+            return false;
+        }
+
+        if (!IsEmbeddedRoomInTicketAudio(language))
+        {
+            return false;
+        }
+
+        var trimmedTicket = ticket.Trim().ToUpperInvariant();
+        if (trimmedTicket.Length == 0)
+        {
+            return false;
+        }
+
+        var prefix = trimmedTicket[0];
+        if (prefix == 'M' && roomNumber != "101")
+        {
+            return true;
+        }
+
+        if (prefix == 'F' && roomNumber != "102")
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsEmbeddedRoomInTicketAudio(string? language) => IsAmharic(language) || IsOromo(language);
+
+    private static bool IsAmharic(string? language) =>
+        language?.Trim().Equals("Amharic", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static string BuildFallbackAnnouncement(string ticket, string? roomNumber, string? language)
+    {
+        if (string.IsNullOrWhiteSpace(roomNumber))
+        {
+            return IsAmharic(language)
+                ? $"ቁጥር {ticket}"
+                : IsOromo(language)
+                    ? $"Lakkoofsa {ticket}"
+                    : $"Ticket {ticket}";
+        }
+
+        if (IsAmharic(language))
+        {
+            return $"ቁጥር {ticket} ወደ ክፍል {roomNumber} ይሂዱ።";
+        }
+
+        if (IsOromo(language))
+        {
+            return $"Lakkoofsa {ticket}, gara kutaa {roomNumber} deemaa.";
+        }
+
+        return $"Ticket {ticket}. Go to room {roomNumber}.";
+    }
+
+    private static bool IsOromo(string? language) =>
+        language?.Trim().Equals("Oromo", StringComparison.OrdinalIgnoreCase) == true
+        || language?.Trim().Equals("Afaan Oromo", StringComparison.OrdinalIgnoreCase) == true;
 
     private static async Task SpeakTextAsync(string text)
     {
@@ -174,10 +266,6 @@ public sealed class AmharicTicketAnnouncer
             }
         }
     }
-
-    private static bool IsOromo(string? language) =>
-        language?.Trim().Equals("Oromo", StringComparison.OrdinalIgnoreCase) == true
-        || language?.Trim().Equals("Afaan Oromo", StringComparison.OrdinalIgnoreCase) == true;
 
     private static string SafeFilePart(string value)
     {
