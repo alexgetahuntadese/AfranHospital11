@@ -219,14 +219,19 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Button x:Name="CallNextButton" Style="{StaticResource ActionButton}" Click="CallNext_Click">
+                        <StackPanel Grid.Row="0" Margin="0,0,0,14">
+                            <TextBlock Text="Room number" Foreground="{StaticResource InkBrush}" FontSize="18" FontWeight="Black" Margin="0,0,0,8" />
+                            <TextBox x:Name="RoomInput" Text="3" Width="260" FontSize="22" Padding="14" />
+                        </StackPanel>
+                        <Button x:Name="CallNextButton" Grid.Row="1" Style="{StaticResource ActionButton}" Click="CallNext_Click">
                             <TextBlock Text="Call next ticket" FontSize="25" FontWeight="Black" TextAlignment="Center" />
                         </Button>
-                        <Button x:Name="RecallButton" Grid.Row="1" Style="{StaticResource ActionButton}" Background="{StaticResource BlueBrush}" Margin="0,14,0,0" Click="Recall_Click">
+                        <Button x:Name="RecallButton" Grid.Row="2" Style="{StaticResource ActionButton}" Background="{StaticResource BlueBrush}" Margin="0,14,0,0" Click="Recall_Click">
                             <TextBlock Text="Recall ticket" FontSize="25" FontWeight="Black" TextAlignment="Center" />
                         </Button>
-                        <Button x:Name="CompleteButton" Grid.Row="2" Style="{StaticResource ActionButton}" Background="{StaticResource BrightBlueBrush}" Margin="0,14,0,0" Click="Complete_Click">
+                        <Button x:Name="CompleteButton" Grid.Row="3" Style="{StaticResource ActionButton}" Background="{StaticResource BrightBlueBrush}" Margin="0,14,0,0" Click="Complete_Click">
                             <TextBlock Text="Complete and call next" FontSize="25" FontWeight="Black" TextAlignment="Center" />
                         </Button>
                     </Grid>

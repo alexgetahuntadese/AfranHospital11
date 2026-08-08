@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Net;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
@@ -80,6 +81,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<QueueDb>();
     db.Database.EnsureCreated();
+    await EnsureRoomNumberColumnAsync(db);
 }
 
 app.UseCors("lan-clients");
@@ -141,7 +143,7 @@ app.MapPost("/api/tickets", async (
     return Results.Ok(TicketResponse.From(ticket));
 }).RequireRateLimiting("queue-mutations");
 
-app.MapPost("/api/queue/registration/call-next", async (QueueDb db, IHubContext<QueueHub> hub, ILogger<Program> logger, CancellationToken cancellationToken) =>
+app.MapPost("/api/queue/registration/call-next", async (string? roomNumber, QueueDb db, IHubContext<QueueHub> hub, ILogger<Program> logger, CancellationToken cancellationToken) =>
 {
     var waiting = await db.Tickets
         .Where(t => t.Status == TicketStatus.Waiting)
@@ -152,6 +154,10 @@ app.MapPost("/api/queue/registration/call-next", async (QueueDb db, IHubContext<
     {
         return Results.NotFound(new { message = "No waiting tickets." });
     }
+
+    var room = string.IsNullOrWhiteSpace(roomNumber)
+        ? waiting.RoomNumber ?? "3"
+        : roomNumber.Trim();
 
     var calledAt = DateTime.UtcNow;
     var previouslyCalled = await db.Tickets
@@ -166,9 +172,10 @@ app.MapPost("/api/queue/registration/call-next", async (QueueDb db, IHubContext<
 
     waiting.Status = TicketStatus.Called;
     waiting.CalledAt = calledAt;
+    waiting.RoomNumber = room;
     db.QueueEvents.Add(QueueEvent.Called(waiting.TicketCode));
     await db.SaveChangesAsync(cancellationToken);
-    logger.LogInformation("Ticket {TicketCode} called for registration.", waiting.TicketCode);
+    logger.LogInformation("Ticket {TicketCode} called for registration in room {RoomNumber}.", waiting.TicketCode, waiting.RoomNumber);
 
     var display = await QueueDisplay.Load(db);
     await hub.Clients.All.SendAsync("TicketCalled", TicketDto.From(waiting));
@@ -252,6 +259,38 @@ static string NormalizeGender(string? gender)
     return gender?.Trim().Equals("Male", StringComparison.OrdinalIgnoreCase) == true ? "Male" : "Female";
 }
 
+static async Task EnsureRoomNumberColumnAsync(QueueDb db)
+{
+    var connection = db.Database.GetDbConnection();
+    await connection.OpenAsync();
+    try
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA table_info('Tickets');";
+        using var reader = await command.ExecuteReaderAsync();
+        var hasRoomNumber = false;
+        while (await reader.ReadAsync())
+        {
+            if (reader.GetString(reader.GetOrdinal("name")).Equals("RoomNumber", StringComparison.OrdinalIgnoreCase))
+            {
+                hasRoomNumber = true;
+                break;
+            }
+        }
+
+        if (!hasRoomNumber)
+        {
+            using var addColumn = connection.CreateCommand();
+            addColumn.CommandText = "ALTER TABLE Tickets ADD COLUMN RoomNumber TEXT;";
+            await addColumn.ExecuteNonQueryAsync();
+        }
+    }
+    finally
+    {
+        await connection.CloseAsync();
+    }
+}
+
 public sealed class QueueHub : Hub
 {
 }
@@ -278,6 +317,7 @@ public sealed class Ticket
     public DateTime CreatedAt { get; set; }
     public DateTime? CalledAt { get; set; }
     public DateTime? CompletedAt { get; set; }
+    public string? RoomNumber { get; set; }
 }
 
 public sealed class QueueEvent
@@ -307,16 +347,16 @@ public static class TicketStatus
 }
 
 public sealed record CreateTicketRequest(string? Gender, string? Language);
-public sealed record TicketResponse(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt)
+public sealed record TicketResponse(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt, string? RoomNumber = null)
 {
     public static TicketResponse From(Ticket ticket) =>
-        new(ticket.TicketCode, ticket.Gender, ticket.Language, ticket.Status, ticket.CreatedAt);
+        new(ticket.TicketCode, ticket.Gender, ticket.Language, ticket.Status, ticket.CreatedAt, ticket.RoomNumber);
 }
-public sealed record TicketDto(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt)
+public sealed record TicketDto(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt, string? RoomNumber = null)
 {
     public static TicketDto From(Ticket ticket)
     {
-        return new TicketDto(ticket.TicketCode, ticket.Gender, ticket.Language, ticket.Status, ticket.CreatedAt);
+        return new TicketDto(ticket.TicketCode, ticket.Gender, ticket.Language, ticket.Status, ticket.CreatedAt, ticket.RoomNumber);
     }
 }
 

@@ -81,7 +81,9 @@ public partial class TvWindow : Window
                 {
                     NowServingLabel.Text = ticket.Ticket;
                     RoomTicket3.Text = ticket.Ticket;
-                    RoomDisplayLabel.Text = $"GO TO GCC OPD ROOM {RoomFor(ticket)}";
+                    RoomDisplayLabel.Text = ticket.RoomNumber is not null
+                        ? $"GO TO GCC OPD ROOM {ticket.RoomNumber}"
+                        : $"GO TO GCC OPD ROOM {RoomFor(ticket)}";
                 });
                 _ = _announcer.AnnounceAsync(ticket.Ticket, ticket.Language);
             });
@@ -110,7 +112,9 @@ public partial class TvWindow : Window
         var nowServing = display.NowServing?.Ticket ?? "-";
         NowServingLabel.Text = nowServing;
         RoomTicket3.Text = nowServing;
-        RoomDisplayLabel.Text = $"GO TO GCC OPD ROOM {RoomFor(display.NowServing)}";
+        RoomDisplayLabel.Text = display.NowServing?.RoomNumber is not null
+            ? $"GO TO GCC OPD ROOM {display.NowServing.RoomNumber}"
+            : $"GO TO GCC OPD ROOM {RoomFor(display.NowServing)}";
 
         SetRoomTickets(display);
         SetQueueRows(display.Waiting);
@@ -146,6 +150,11 @@ public partial class TvWindow : Window
 
     private static string RoomFor(TicketDto? ticket)
     {
+        if (!string.IsNullOrWhiteSpace(ticket?.RoomNumber))
+        {
+            return ticket.RoomNumber;
+        }
+
         if (ticket?.Gender.Equals("Male", StringComparison.OrdinalIgnoreCase) == true)
         {
             return "101";

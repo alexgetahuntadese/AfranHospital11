@@ -35,9 +35,14 @@ public sealed class QueueApiClient : IAsyncDisposable
         return (await response.Content.ReadFromJsonAsync<TicketResponse>())?.Ticket;
     }
 
-    public async Task<TicketDto?> CallNextAsync()
+    public async Task<TicketDto?> CallNextAsync(string? roomNumber = null)
     {
-        return await PostQueueActionAsync("/api/queue/registration/call-next");
+        var endpoint = "/api/queue/registration/call-next";
+        if (!string.IsNullOrWhiteSpace(roomNumber))
+        {
+            endpoint += $"?roomNumber={Uri.EscapeDataString(roomNumber.Trim())}";
+        }
+        return await PostQueueActionAsync(endpoint);
     }
 
     public async Task<TicketDto?> CompleteAsync()
@@ -87,7 +92,7 @@ public sealed class QueueApiClient : IAsyncDisposable
         var result = await response.Content.ReadFromJsonAsync<TicketResponse>();
         return result is null
             ? null
-            : new TicketDto(result.Ticket, result.Gender, result.Language, result.Status, result.CreatedAt);
+            : new TicketDto(result.Ticket, result.Gender, result.Language, result.Status, result.CreatedAt, result.RoomNumber);
     }
 
     public async ValueTask DisposeAsync()
@@ -101,10 +106,10 @@ public sealed class QueueApiClient : IAsyncDisposable
     }
 
     private sealed record CreateTicketRequest(string Gender, string Language);
-    private sealed record TicketResponse(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt);
+    private sealed record TicketResponse(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt, string? RoomNumber = null);
 }
 
-public sealed record TicketDto(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt)
+public sealed record TicketDto(string Ticket, string Gender, string Language, string Status, DateTime CreatedAt, string? RoomNumber = null)
 {
     public string TimeText => CreatedAt.ToLocalTime().ToString("HH:mm");
 }

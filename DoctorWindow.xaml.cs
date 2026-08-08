@@ -45,12 +45,14 @@ public partial class DoctorWindow : Window
                 Dispatcher.Invoke(() =>
                 {
                     NowCallingLabel.Text = ticket.Ticket;
-                    RoomLabel.Text = "Doctor Room 3";
+                    RoomLabel.Text = ticket.RoomNumber is not null
+                        ? DoctorRoomText(ticket.RoomNumber)
+                        : DoctorRoomText(CurrentRoomNumber);
                     _currentTicket = ticket;
                 });
                 _ = AnnounceTicketOnceAsync(ticket);
             });
-            RoomLabel.Text = displayRoomText();
+            RoomLabel.Text = DoctorRoomText(CurrentRoomNumber);
         }
         catch (Exception ex)
         {
@@ -93,7 +95,11 @@ public partial class DoctorWindow : Window
         }
     }
 
-    private string displayRoomText() => "Doctor Room 3";
+    private string CurrentRoomNumber => string.IsNullOrWhiteSpace(RoomInput?.Text)
+        ? "3"
+        : RoomInput.Text.Trim();
+
+    private static string DoctorRoomText(string roomNumber) => $"Doctor Room {roomNumber}";
 
     private void ApplyDisplay(QueueDisplay display)
     {
@@ -101,7 +107,9 @@ public partial class DoctorWindow : Window
         _currentTicket = display.NowServing;
         if (display.NowServing is not null)
         {
-            RoomLabel.Text = "Doctor Room 3";
+            RoomLabel.Text = display.NowServing.RoomNumber is not null
+                ? DoctorRoomText(display.NowServing.RoomNumber)
+                : DoctorRoomText(CurrentRoomNumber);
         }
 
         WaitingTicketsList.ItemsSource = display.Waiting;
@@ -124,9 +132,13 @@ public partial class DoctorWindow : Window
 
         try
         {
-            var ticket = await _apiClient.CallNextAsync();
+            var ticket = await _apiClient.CallNextAsync(CurrentRoomNumber);
             NowCallingLabel.Text = ticket?.Ticket ?? "-";
-            RoomLabel.Text = ticket is null ? "No waiting tickets." : "Doctor Room 3";
+            RoomLabel.Text = ticket is null
+                ? "No waiting tickets."
+                : ticket.RoomNumber is not null
+                    ? DoctorRoomText(ticket.RoomNumber)
+                    : DoctorRoomText(CurrentRoomNumber);
             if (ticket is not null)
             {
                 _ = AnnounceTicketOnceAsync(ticket);
@@ -175,7 +187,9 @@ public partial class DoctorWindow : Window
             var recalled = await _apiClient.RecallCurrentAsync();
             RoomLabel.Text = recalled is null
                 ? "No called ticket to recall."
-                : $"Recalling {recalled}.";
+                : recalled.RoomNumber is not null
+                    ? $"Recalling {recalled.Ticket} in {DoctorRoomText(recalled.RoomNumber)}."
+                    : $"Recalling {recalled.Ticket}.";
             if (recalled is not null)
             {
                 _currentTicket = recalled;
@@ -203,11 +217,13 @@ public partial class DoctorWindow : Window
                 return;
             }
 
-            var next = await _apiClient.CallNextAsync();
+            var next = await _apiClient.CallNextAsync(CurrentRoomNumber);
             NowCallingLabel.Text = next?.Ticket ?? "-";
             RoomLabel.Text = next is not null
-                ? $"Completed {completed.Ticket}. Calling {next.Ticket}."
-                : $"Completed {completed}. No waiting tickets.";
+                ? next.RoomNumber is not null
+                    ? $"Completed {completed.Ticket}. Calling {next.Ticket} in {DoctorRoomText(next.RoomNumber)}."
+                    : $"Completed {completed.Ticket}. Calling {next.Ticket}."
+                : $"Completed {completed.Ticket}. No waiting tickets.";
             if (next is not null)
             {
                 _currentTicket = next;
