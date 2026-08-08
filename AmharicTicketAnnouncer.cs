@@ -39,11 +39,7 @@ public sealed class AmharicTicketAnnouncer
                     {
                         await Task.Delay(RepeatDelay);
                         var repeatAudio = FindRepeatAudio(ticket, audioRoot);
-                        if (repeatAudio is not null)
-                        {
-                            await PlayAudioFileAsync(repeatAudio);
-                        }
-
+                        await PlayAudioFileAsync(repeatAudio ?? ticketAudio);
                         await Task.Delay(RepeatDelay);
                     }
                 }
@@ -83,6 +79,26 @@ public sealed class AmharicTicketAnnouncer
             if (File.Exists(exactTicketAudio))
             {
                 return exactTicketAudio;
+            }
+        }
+
+        return null;
+    }
+
+    private static string? FindRepeatAudio(string? ticket, string voiceRoot)
+    {
+        if (string.IsNullOrWhiteSpace(ticket))
+        {
+            return null;
+        }
+
+        var safeTicket = SafeFilePart(ticket.Trim().ToUpperInvariant());
+        foreach (var extension in new[] { ".wav", ".mp3" })
+        {
+            var repeatFile = Path.Combine(voiceRoot, $"{safeTicket}-repeat{extension}");
+            if (File.Exists(repeatFile))
+            {
+                return repeatFile;
             }
         }
 
