@@ -85,7 +85,7 @@ public partial class TvWindow : Window
                         ? $"GO TO GCC OPD ROOM {ticket.RoomNumber}"
                         : $"GO TO GCC OPD ROOM {RoomFor(ticket)}";
                 });
-                _ = _announcer.AnnounceAsync(ticket.Ticket, ticket.Language);
+                _ = _announcer.AnnounceAsync(ticket.Ticket, ticket.Language, ticket.RoomNumber);
             });
         }
         catch (Exception ex)

@@ -279,7 +279,7 @@ public partial class DoctorWindow : Window
         // AmharicTicketAnnouncer intentionally plays one announcement and one
         // repeat (two plays total). This guard prevents the local API response
         // and the SignalR TicketCalled event from announcing the same ticket twice.
-        return _announcer.AnnounceAsync(ticket.Ticket, ticket.Language);
+        return _announcer.AnnounceAsync(ticket.Ticket, ticket.Language, ticket.RoomNumber);
     }
 
 

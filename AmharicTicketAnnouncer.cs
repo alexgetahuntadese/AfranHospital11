@@ -1,4 +1,5 @@
 using System.IO;
+using System.Speech.Synthesis;
 using System.Windows;
 using System.Windows.Media;
 
@@ -20,32 +21,41 @@ public sealed class AmharicTicketAnnouncer
 
     public bool IsReady => Directory.Exists(_voiceRoot);
 
-    public async Task AnnounceAsync(string? ticket, string? language = null)
+    public async Task AnnounceAsync(string? ticket, string? language = null, string? roomNumber = null)
     {
         var audioRoot = FindVoiceRoot(language);
-        var audioPath = FindTicketAudio(ticket, audioRoot);
-        if (audioPath is null)
-        {
-            return;
-        }
+        var ticketAudio = FindTicketAudio(ticket, audioRoot);
+        var cleanedRoomNumber = string.IsNullOrWhiteSpace(roomNumber) ? null : roomNumber.Trim();
 
         await _speechLock.WaitAsync();
         try
         {
-            for (var repeat = 0; repeat < RepeatCount; repeat++)
+            if (ticketAudio is not null)
             {
-                await PlayAudioFileAsync(audioPath);
-                if (repeat + 1 < RepeatCount)
+                for (var repeat = 0; repeat < RepeatCount; repeat++)
                 {
-                    await Task.Delay(RepeatDelay);
-                    var repeatAudio = FindRepeatAudio(ticket, audioRoot);
-                    if (repeatAudio is not null)
+                    await PlayAudioFileAsync(ticketAudio);
+                    if (repeat + 1 < RepeatCount)
                     {
-                        await PlayAudioFileAsync(repeatAudio);
-                    }
+                        await Task.Delay(RepeatDelay);
+                        var repeatAudio = FindRepeatAudio(ticket, audioRoot);
+                        if (repeatAudio is not null)
+                        {
+                            await PlayAudioFileAsync(repeatAudio);
+                        }
 
-                    await Task.Delay(RepeatDelay);
+                        await Task.Delay(RepeatDelay);
+                    }
                 }
+            }
+            else if (!string.IsNullOrWhiteSpace(ticket))
+            {
+                await SpeakTextAsync($"Ticket {ticket}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(cleanedRoomNumber))
+            {
+                await PlayRoomNumberAsync(cleanedRoomNumber, audioRoot);
             }
         }
         catch (Exception ex)
@@ -79,23 +89,47 @@ public sealed class AmharicTicketAnnouncer
         return null;
     }
 
-    private string? FindRepeatAudio(string? ticket, string voiceRoot)
+    private static async Task PlayRoomNumberAsync(string roomNumber, string voiceRoot)
     {
-        var voice = "female";
-        if (!string.IsNullOrWhiteSpace(ticket)
-            && _ticketVoices.TryGetValue(ticket.Trim().ToUpperInvariant(), out var manifestVoice))
+        var roomAudio = FindRoomAudio(roomNumber, voiceRoot);
+        if (roomAudio is not null)
         {
-            voice = manifestVoice;
+            await PlayAudioFileAsync(roomAudio);
+            return;
         }
 
-        var preferred = Path.Combine(voiceRoot, $"repeat-{voice}.mp3");
-        if (File.Exists(preferred))
+        await SpeakTextAsync($"Room {roomNumber}");
+    }
+
+    private static string? FindRoomAudio(string roomNumber, string voiceRoot)
+    {
+        var safeRoom = SafeFilePart(roomNumber.ToUpperInvariant());
+        foreach (var extension in new[] { ".wav", ".mp3" })
         {
-            return preferred;
+            var roomFile = Path.Combine(voiceRoot, $"Room{safeRoom}{extension}");
+            if (File.Exists(roomFile))
+            {
+                return roomFile;
+            }
+
+            var roomFileAlt = Path.Combine(voiceRoot, $"room-{safeRoom}{extension}");
+            if (File.Exists(roomFileAlt))
+            {
+                return roomFileAlt;
+            }
         }
 
-        var fallback = Path.Combine(voiceRoot, "repeat-female.mp3");
-        return File.Exists(fallback) ? fallback : null;
+        return null;
+    }
+
+    private static async Task SpeakTextAsync(string text)
+    {
+        await Task.Run(() =>
+        {
+            using var synth = new SpeechSynthesizer();
+            synth.SetOutputToDefaultAudioDevice();
+            synth.Speak(text);
+        });
     }
 
     private static string FindVoiceRoot(string? language = null)
