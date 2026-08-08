@@ -18,7 +18,7 @@ public sealed class QueueApiIntegrationTests : IAsyncLifetime
         _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
             builder.UseSetting("Security:ApiKey", ApiKey);
-            builder.UseSetting("ConnectionStrings:QueueDb", $"Data Source={_databasePath}");
+            builder.UseSetting("ConnectionStrings:QueueDb", $"Data Source={_databasePath};Pooling=False");
             builder.ConfigureTestServices(services => { });
         });
         _client = _factory.CreateClient();
