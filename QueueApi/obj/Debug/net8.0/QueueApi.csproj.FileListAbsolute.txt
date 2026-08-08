@@ -79,3 +79,6 @@ C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\refint\QueueApi.
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.pdb
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\QueueApi.genruntimeconfig.cache
 C:\Users\USER\Desktop\AfranHospital11\QueueApi\obj\Debug\net8.0\ref\QueueApi.dll
+C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\wwwroot\assets\corridor-development-video.mp4
+C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\wwwroot\assets\afranlogo.png
+C:\Users\USER\Desktop\AfranHospital11\QueueApi\bin\Debug\net8.0\QueueApi.staticwebassets.runtime.json

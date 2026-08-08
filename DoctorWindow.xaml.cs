@@ -16,6 +16,7 @@ public partial class DoctorWindow : Window
     private readonly SemaphoreSlim _actionLock = new(1, 1);
     private readonly SemaphoreSlim _refreshLock = new(1, 1);
     private string? _lastAnnouncedTicket;
+    private string? _lastAnnouncedRoom;
     private DateTime _lastAnnouncementUtc;
     private TicketDto? _currentTicket;
 
@@ -42,15 +43,17 @@ public partial class DoctorWindow : Window
                 Dispatcher.Invoke(() => ApplyDisplay(display));
             }, ticket =>
             {
+                string? allocatedRoom = null;
                 Dispatcher.Invoke(() =>
                 {
                     NowCallingLabel.Text = ticket.Ticket;
                     RoomLabel.Text = ticket.RoomNumber is not null
                         ? DoctorRoomText(ticket.RoomNumber)
                         : DoctorRoomText(CurrentRoomNumber);
+                    allocatedRoom = ticket.RoomNumber ?? CurrentRoomNumber;
                     _currentTicket = ticket;
                 });
-                _ = AnnounceTicketOnceAsync(ticket);
+                _ = AnnounceTicketOnceAsync(ticket, allocatedRoom);
             });
             RoomLabel.Text = DoctorRoomText(CurrentRoomNumber);
         }
@@ -132,7 +135,8 @@ public partial class DoctorWindow : Window
 
         try
         {
-            var ticket = await _apiClient.CallNextAsync(CurrentRoomNumber);
+            var allocatedRoom = CurrentRoomNumber;
+            var ticket = await _apiClient.CallNextAsync(allocatedRoom);
             NowCallingLabel.Text = ticket?.Ticket ?? "-";
             RoomLabel.Text = ticket is null
                 ? "No waiting tickets."
@@ -141,7 +145,7 @@ public partial class DoctorWindow : Window
                     : DoctorRoomText(CurrentRoomNumber);
             if (ticket is not null)
             {
-                _ = AnnounceTicketOnceAsync(ticket);
+                _ = AnnounceTicketOnceAsync(ticket, allocatedRoom);
                 _currentTicket = ticket;
             }
 
@@ -193,7 +197,7 @@ public partial class DoctorWindow : Window
             if (recalled is not null)
             {
                 _currentTicket = recalled;
-                _ = AnnounceTicketOnceAsync(recalled);
+                _ = AnnounceTicketOnceAsync(recalled, recalled.RoomNumber ?? CurrentRoomNumber);
             }
         }
         catch (Exception ex)
@@ -209,6 +213,7 @@ public partial class DoctorWindow : Window
 
         try
         {
+            var allocatedRoom = CurrentRoomNumber;
             var completed = await _apiClient.CompleteAsync();
             if (completed is null)
             {
@@ -217,7 +222,7 @@ public partial class DoctorWindow : Window
                 return;
             }
 
-            var next = await _apiClient.CallNextAsync(CurrentRoomNumber);
+            var next = await _apiClient.CallNextAsync(allocatedRoom);
             NowCallingLabel.Text = next?.Ticket ?? "-";
             RoomLabel.Text = next is not null
                 ? next.RoomNumber is not null
@@ -227,7 +232,7 @@ public partial class DoctorWindow : Window
             if (next is not null)
             {
                 _currentTicket = next;
-                _ = AnnounceTicketOnceAsync(next);
+                _ = AnnounceTicketOnceAsync(next, allocatedRoom);
             }
 
             // Refresh the queue in the background so the buttons are
@@ -262,24 +267,30 @@ public partial class DoctorWindow : Window
         _actionLock.Release();
     }
 
-    private Task AnnounceTicketOnceAsync(TicketDto ticket)
+    private Task AnnounceTicketOnceAsync(TicketDto ticket, string? allocatedRoom = null)
     {
+        var roomNumber = string.IsNullOrWhiteSpace(allocatedRoom)
+            ? ticket.RoomNumber ?? "3"
+            : allocatedRoom.Trim();
+
         lock (_announcementLock)
         {
             if (string.Equals(_lastAnnouncedTicket, ticket.Ticket, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(_lastAnnouncedRoom, roomNumber, StringComparison.OrdinalIgnoreCase) &&
                 DateTime.UtcNow - _lastAnnouncementUtc < TimeSpan.FromSeconds(10))
             {
                 return Task.CompletedTask;
             }
 
             _lastAnnouncedTicket = ticket.Ticket;
+            _lastAnnouncedRoom = roomNumber;
             _lastAnnouncementUtc = DateTime.UtcNow;
         }
 
         // AmharicTicketAnnouncer intentionally plays one announcement and one
         // repeat (two plays total). This guard prevents the local API response
         // and the SignalR TicketCalled event from announcing the same ticket twice.
-        return _announcer.AnnounceAsync(ticket.Ticket, ticket.Language, ticket.RoomNumber);
+        return _announcer.AnnounceAsync(ticket.Ticket, ticket.Language, roomNumber);
     }
 
 

@@ -1,11 +1,77 @@
 {
   "Version": 1,
-  "Hash": "TPv3hzzLMf3Wu2QDURVU7C1mYZ+Be1I2YORHZ9q+qUU=",
+  "Hash": "dALKPkmEqujqmk8niLUsmHYhgdf56WoKLdo0kiVddLw=",
   "Source": "QueueApi",
   "BasePath": "_content/QueueApi",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "QueueApi\\wwwroot",
+      "Source": "QueueApi",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\AfranHospital11\\QueueApi\\wwwroot\\",
+      "BasePath": "_content/QueueApi",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\AfranHospital11\\Assets\\AddisSlideshow\\corridor-development-video.mp4",
+      "SourceId": "QueueApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\AfranHospital11\\QueueApi\\wwwroot\\",
+      "BasePath": "_content/QueueApi",
+      "RelativePath": "assets/corridor-development-video.mp4",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "PreserveNewest",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "..\\Assets\\AddisSlideshow\\corridor-development-video.mp4"
+    },
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\AfranHospital11\\Assets\\afranlogo.png",
+      "SourceId": "QueueApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\AfranHospital11\\QueueApi\\wwwroot\\",
+      "BasePath": "_content/QueueApi",
+      "RelativePath": "assets/afranlogo.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "PreserveNewest",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "..\\Assets\\afranlogo.png"
+    },
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\AfranHospital11\\QueueApi\\wwwroot\\tv\\index.html",
+      "SourceId": "QueueApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\AfranHospital11\\QueueApi\\wwwroot\\",
+      "BasePath": "_content/QueueApi",
+      "RelativePath": "tv/index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\tv\\index.html"
+    }
+  ]
 }

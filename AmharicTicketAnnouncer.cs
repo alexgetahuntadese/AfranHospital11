@@ -37,11 +37,21 @@ public sealed class AmharicTicketAnnouncer
                 for (var repeat = 0; repeat < RepeatCount; repeat++)
                 {
                     await PlayAudioFileAsync(ticketAudio!);
+                    if (!string.IsNullOrWhiteSpace(cleanedRoomNumber))
+                    {
+                        await PlayRoomNumberAsync(cleanedRoomNumber, audioRoot, language);
+                    }
+
                     if (repeat + 1 < RepeatCount)
                     {
                         await Task.Delay(RepeatDelay);
                         var repeatAudio = FindRepeatAudio(ticket, audioRoot);
                         await PlayAudioFileAsync(repeatAudio ?? ticketAudio);
+                        if (!string.IsNullOrWhiteSpace(cleanedRoomNumber))
+                        {
+                            await PlayRoomNumberAsync(cleanedRoomNumber, audioRoot, language);
+                        }
+
                         await Task.Delay(RepeatDelay);
                     }
                 }
