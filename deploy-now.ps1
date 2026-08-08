@@ -13,7 +13,7 @@ New-Item -ItemType Directory -Force -Path $desktopOutputX86 | Out-Null
 New-Item -ItemType Directory -Force -Path $apiOutput | Out-Null
 New-Item -ItemType Directory -Force -Path $apiOutputX86 | Out-Null
 
-Write-Host "Publishing Afran Hospital desktop launcher and modules..." -ForegroundColor Cyan
+Write-Host "Publishing HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC desktop launcher and modules..." -ForegroundColor Cyan
 dotnet publish (Join-Path $PSScriptRoot "AfranHospitalKiosk.csproj") -c Release -r win-x64 --self-contained true --no-restore -o $desktopOutput
 if ($LASTEXITCODE -ne 0) { throw "Desktop publish failed with exit code $LASTEXITCODE." }
 
@@ -39,20 +39,20 @@ if /i "%PROCESSOR_ARCHITEW6432%"=="" if /i "%PROCESSOR_ARCHITECTURE%"=="x86" (
 )
 set "APP_EXE=%APP_DIR%\AfranHospitalKiosk.exe"
 if not exist "%APP_EXE%" (
-    echo Afran Hospital launcher was not found:
+    echo HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC launcher was not found:
     echo %APP_EXE%
     echo.
     echo This package supports Windows 10/11 64-bit and 32-bit PCs.
     pause
     exit /b 1
 )
-start "Afran Hospital Launcher" /D "%APP_DIR%" "%APP_EXE%"
+start "HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC Launcher" /D "%APP_DIR%" "%APP_EXE%"
 exit /b 0
 '@
 Set-Content -LiteralPath (Join-Path $OutputDirectory "Start-AfranHospital.bat") -Value $startScript -Encoding ASCII
 
 $readme = @'
-AFRAN HOSPITAL QUEUE SYSTEM
+HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC QUEUE SYSTEM
 
 Start-AfranHospital.bat is the single entry point. It opens the launcher UI,
 where you can start Queue API, Kiosk, Doctor Station, and Waiting Room TV.

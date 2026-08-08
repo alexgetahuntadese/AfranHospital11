@@ -101,7 +101,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => Results.Ok(new { service = "Afran Queue API", status = "Running" }));
+app.MapGet("/", () => Results.Ok(new { service = "HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC QUEUE API", status = "Running" }));
 app.MapHealthChecks("/health/live");
 app.MapGet("/health/ready", async (QueueDb db, CancellationToken cancellationToken) =>
 {

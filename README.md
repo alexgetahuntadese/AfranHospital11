@@ -1,4 +1,4 @@
-# Afran Hospital Queue System
+# HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC QUEUE SYSTEM
 
 For day-to-day operation, see [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
 

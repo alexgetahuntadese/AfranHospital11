@@ -60,7 +60,7 @@ public sealed class AmharicTicketAnnouncer
 
             if (shouldUseTicketAudio && !string.IsNullOrWhiteSpace(cleanedRoomNumber) && isEmbeddedLanguage)
             {
-                await SpeakTextAsync(BuildFallbackAnnouncement(ticket, cleanedRoomNumber, language));
+                await SpeakTextAsync(BuildFallbackAnnouncement(ticket!, cleanedRoomNumber, language));
                 return;
             }
 

@@ -215,7 +215,7 @@ public partial class MainWindow : Window
             ticketVisual.Arrange(new Rect(0, 0, 320, 460));
             ticketVisual.UpdateLayout();
 
-            dialog.PrintVisual(ticketVisual, $"Afran Hospital Registration {ticket}");
+            dialog.PrintVisual(ticketVisual, $"HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC REGISTRATION {ticket}");
             return true;
         }
         catch (PrintSystemException)
@@ -244,7 +244,7 @@ public partial class MainWindow : Window
                 {
                     new TextBlock
                     {
-                        Text = "AFRAN HOSPITAL",
+                        Text = "HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC",
                         FontSize = 24,
                         FontWeight = FontWeights.Black,
                         TextAlignment = TextAlignment.Center

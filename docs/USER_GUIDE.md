@@ -1,4 +1,4 @@
-# Afran Hospital Queue System — User Guide
+# HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC — USER GUIDE
 
 ## System roles
 

@@ -1,4 +1,4 @@
-﻿AFRAN HOSPITAL QUEUE SYSTEM
+﻿HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC QUEUE SYSTEM
 
 Start-AfranHospital.bat is the single entry point. It opens the launcher UI,
 where you can start Queue API, Kiosk, Doctor Station, and Waiting Room TV.

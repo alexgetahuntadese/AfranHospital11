@@ -1,7 +1,7 @@
 <Window x:Class="AfranHospitalKiosk.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Afran Hospital Registration Kiosk"
+        Title="HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC · REGISTRATION KIOSK"
         Width="1366"
         Height="768"
         MinWidth="1180"

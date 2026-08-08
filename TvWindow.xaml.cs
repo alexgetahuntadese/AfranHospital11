@@ -82,8 +82,8 @@ public partial class TvWindow : Window
                     NowServingLabel.Text = ticket.Ticket;
                     RoomTicket3.Text = ticket.Ticket;
                     RoomDisplayLabel.Text = ticket.RoomNumber is not null
-                        ? $"GO TO GCC OPD ROOM {ticket.RoomNumber}"
-                        : $"GO TO GCC OPD ROOM {RoomFor(ticket)}";
+                        ? $"GO TO ROOM {ticket.RoomNumber}"
+                        : $"GO TO ROOM {RoomFor(ticket)}";
                 });
                 _ = _announcer.AnnounceAsync(ticket.Ticket, ticket.Language, ticket.RoomNumber);
             });
@@ -113,13 +113,13 @@ public partial class TvWindow : Window
         NowServingLabel.Text = nowServing;
         RoomTicket3.Text = nowServing;
         RoomDisplayLabel.Text = display.NowServing?.RoomNumber is not null
-            ? $"GO TO GCC OPD ROOM {display.NowServing.RoomNumber}"
-            : $"GO TO GCC OPD ROOM {RoomFor(display.NowServing)}";
+            ? $"GO TO ROOM {display.NowServing.RoomNumber}"
+            : $"GO TO ROOM {RoomFor(display.NowServing)}";
 
         SetRoomTickets(display);
         SetQueueRows(display.Waiting);
 
-        TickerLabel.Text = $"Waiting: {display.WaitingCount}  •  Welcome to Afran General Hospital  •  እንኳን ደህና መጡ  •  Baga nagaan dhuftan";
+        TickerLabel.Text = $"Waiting: {display.WaitingCount}  •  HIWOT FANA INTERNAL MEDICINE SPECIALTY CLINIC  •  እንኳን ደህና መጡ  •  Baga nagaan dhuftan";
     }
 
     private void SetRoomTickets(QueueDisplay display)
@@ -181,7 +181,7 @@ public partial class TvWindow : Window
     {
         _fallbackTicket++;
         NowServingLabel.Text = $"M{_fallbackTicket:000}";
-        RoomDisplayLabel.Text = "GO TO GCC OPD ROOM 101";
+        RoomDisplayLabel.Text = "GO TO ROOM 101";
         RoomTicket1.Text = $"F{_fallbackTicket + 2:000}";
         RoomTicket2.Text = $"M{_fallbackTicket + 3:000}";
         RoomTicket3.Text = $"M{_fallbackTicket:000}";
