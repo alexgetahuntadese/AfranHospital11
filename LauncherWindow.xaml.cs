@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -33,6 +34,12 @@ public partial class LauncherWindow : Window
     {
         var clientUrl = NormalizeClientUrl(ApiUrlBox.Text);
         Environment.SetEnvironmentVariable("AFRAN_QUEUE_API", clientUrl);
+        var apiKey = Environment.GetEnvironmentVariable("AFRAN_QUEUE_API_KEY");
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            apiKey = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+            Environment.SetEnvironmentVariable("AFRAN_QUEUE_API_KEY", apiKey);
+        }
 
         try
         {
@@ -48,6 +55,7 @@ public partial class LauncherWindow : Window
                     CreateNoWindow = true
                 };
                 startInfo.Environment["ASPNETCORE_URLS"] = "http://0.0.0.0:5000";
+                startInfo.Environment["Security__ApiKey"] = apiKey;
             }
             else
             {
@@ -59,6 +67,7 @@ public partial class LauncherWindow : Window
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
+                startInfo.Environment["Security__ApiKey"] = apiKey;
             }
 
             _apiProcess = Process.Start(startInfo);

@@ -40,11 +40,14 @@ GET /health/live     process liveness
 GET /health/ready    database readiness
 ```
 
-For a protected LAN deployment, set `Security:ApiKey` in
+Queue-changing API requests require authentication. For a protected LAN
+deployment, set `Security:ApiKey` in
 `QueueApi\appsettings.json` (or the `Security__ApiKey` environment variable)
 and set the same value as `AFRAN_QUEUE_API_KEY` on every desktop client. The
-API then requires `X-Api-Key` for queue-changing requests. Keep the key out of
-source control and deployment documentation.
+API requires `X-Api-Key` for queue-changing requests and refuses mutations when
+no key is configured. Keep the key out of source control and deployment
+documentation. When the launcher starts a local API without a configured key,
+it generates a random per-run key and shares it with the modules it launches.
 
 Browser-based clients should list their exact origins under
 `Cors:AllowedOrigins`; when the list is empty, only localhost and private LAN
@@ -110,9 +113,18 @@ Current app state:
 
 - The screens and launch modes are ready.
 - `QueueApi` provides SQLite storage, queue endpoints, and SignalR `/queueHub`.
-- Kiosk creates tickets through the API, with local fallback if the API is offline.
+- Kiosk creates tickets through the API and does not print unsynchronized local fallback tickets.
 - Doctor and TV modes read from the API and subscribe to SignalR queue updates.
 - Publish `QueueApi` and the WPF app separately for LAN deployment.
+
+## Tests
+
+The API integration tests cover concurrent ticket creation and the create/call/
+complete queue transition:
+
+```powershell
+dotnet test .\QueueApi.Tests\QueueApi.Tests.csproj
+```
 
 ## Local Amharic Audio
 

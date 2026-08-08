@@ -41,6 +41,9 @@
     <Compile Remove="QueueApi\**\*.cs" />
     <Content Remove="QueueApi\**\*" />
     <None Remove="QueueApi\**\*" />
+    <Compile Remove="QueueApi.Tests\**\*.cs" />
+    <Content Remove="QueueApi.Tests\**\*" />
+    <None Remove="QueueApi.Tests\**\*" />
   </ItemGroup>
 
 </Project>

@@ -4,6 +4,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,15 +64,23 @@ app.UseStaticFiles();
 var configuredApiKey = builder.Configuration["Security:ApiKey"]?.Trim();
 app.Use(async (context, next) =>
 {
-    if (!string.IsNullOrWhiteSpace(configuredApiKey) &&
-        context.Request.Path.StartsWithSegments("/api") &&
+    if (context.Request.Path.StartsWithSegments("/api") &&
         !HttpMethods.IsGet(context.Request.Method) &&
-        !HttpMethods.IsHead(context.Request.Method) &&
-        !string.Equals(context.Request.Headers["X-Api-Key"], configuredApiKey, StringComparison.Ordinal))
+        !HttpMethods.IsHead(context.Request.Method))
     {
+        if (string.IsNullOrWhiteSpace(configuredApiKey))
+        {
+            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+            await context.Response.WriteAsJsonAsync(new { message = "Queue mutation authentication is not configured." });
+            return;
+        }
+
+        if (!string.Equals(context.Request.Headers["X-Api-Key"], configuredApiKey, StringComparison.Ordinal))
+        {
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         await context.Response.WriteAsJsonAsync(new { message = "A valid X-Api-Key is required." });
         return;
+        }
     }
 
     await next();
@@ -82,6 +91,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<QueueDb>();
     db.Database.EnsureCreated();
     await EnsureRoomNumberColumnAsync(db);
+    await EnsureSequenceTableAsync(db);
 }
 
 app.UseCors("lan-clients");
@@ -117,7 +127,7 @@ app.MapPost("/api/tickets", async (
     var language = string.IsNullOrWhiteSpace(request.Language) ? "English" : request.Language.Trim();
     var prefix = gender.Equals("Male", StringComparison.OrdinalIgnoreCase) ? "M" : "F";
     await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
-    var nextNumber = await db.Tickets.CountAsync(t => t.Prefix == prefix, cancellationToken) + 1;
+    var nextNumber = await GetNextTicketNumberAsync(db, prefix, cancellationToken);
     var ticketCode = $"{prefix}{nextNumber:000}";
 
     var ticket = new Ticket
@@ -291,6 +301,49 @@ static async Task EnsureRoomNumberColumnAsync(QueueDb db)
     }
 }
 
+static async Task EnsureSequenceTableAsync(QueueDb db)
+{
+    var connection = db.Database.GetDbConnection();
+    await connection.OpenAsync();
+    try
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            CREATE TABLE IF NOT EXISTS TicketSequences (
+                Prefix TEXT NOT NULL PRIMARY KEY,
+                NextNumber INTEGER NOT NULL
+            );
+            INSERT OR IGNORE INTO TicketSequences (Prefix, NextNumber)
+            SELECT Prefix, COALESCE(MAX(CAST(SUBSTR(TicketCode, 2) AS INTEGER)), 0)
+            FROM Tickets
+            GROUP BY Prefix;
+            """;
+        await command.ExecuteNonQueryAsync();
+    }
+    finally
+    {
+        await connection.CloseAsync();
+    }
+}
+
+static async Task<int> GetNextTicketNumberAsync(QueueDb db, string prefix, CancellationToken cancellationToken)
+{
+    var connection = db.Database.GetDbConnection();
+    await using var command = connection.CreateCommand();
+    command.Transaction = db.Database.CurrentTransaction?.GetDbTransaction();
+    command.CommandText = """
+        INSERT INTO TicketSequences (Prefix, NextNumber)
+        VALUES ($prefix, 1)
+        ON CONFLICT(Prefix) DO UPDATE SET NextNumber = NextNumber + 1
+        RETURNING NextNumber;
+        """;
+    var parameter = command.CreateParameter();
+    parameter.ParameterName = "$prefix";
+    parameter.Value = prefix;
+    command.Parameters.Add(parameter);
+    return Convert.ToInt32(await command.ExecuteScalarAsync(cancellationToken));
+}
+
 public sealed class QueueHub : Hub
 {
 }
@@ -382,3 +435,5 @@ public sealed record QueueDisplay(TicketDto? NowServing, IReadOnlyList<TicketDto
             waitingCount);
     }
 }
+
+public partial class Program;

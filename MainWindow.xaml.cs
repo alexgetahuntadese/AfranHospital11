@@ -85,7 +85,19 @@ public partial class MainWindow : Window
         _step = WizardStep.Printing;
         UpdateWizard();
 
-        var ticket = await CreateLanTicketOrFallback(gender);
+        string ticket;
+        try
+        {
+            ticket = await CreateLanTicketAsync(gender);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"API Error: {ex.Message}");
+            ResetSelection();
+            UpdateWizard();
+            StatusLabel.Text = "Registration service unavailable. Please try again.";
+            return;
+        }
         TicketLabel.Text = ticket;
         
         // Print in background
@@ -109,25 +121,14 @@ public partial class MainWindow : Window
         StatusLabel.Text = "Ready for registration.";
     }
 
-    private async Task<string> CreateLanTicketOrFallback(string gender)
+    private async Task<string> CreateLanTicketAsync(string gender)
     {
-        try
+        var ticket = await _apiClient.CreateTicketAsync(gender, Text.LanguageName);
+        if (string.IsNullOrWhiteSpace(ticket))
         {
-            var ticket = await _apiClient.CreateTicketAsync(gender, Text.LanguageName);
-            if (!string.IsNullOrWhiteSpace(ticket))
-            {
-                return ticket;
-            }
+            throw new InvalidOperationException("The API returned an empty ticket number.");
         }
-        catch (Exception ex)
-        {
-            // Keep the kiosk useful if the LAN API is temporarily offline.
-            System.Diagnostics.Debug.WriteLine($"API Error: {ex.Message}");
-        }
-
-        var fallback = CurrentTicket;
-        _ticketNumber++;
-        return fallback;
+        return ticket;
     }
 
     private void BackButton_Click(object sender, RoutedEventArgs e)

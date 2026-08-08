@@ -12,3 +12,6 @@ Tools/VoiceSampleGenerator/Lib/
 Tools/VoiceSampleGenerator/Scripts/
 Tools/VoiceSampleGenerator/pyvenv.cfg
 build-check/
+QueueApi.Tests/bin/
+QueueApi.Tests/obj/
+QueueApi.Tests/*.db

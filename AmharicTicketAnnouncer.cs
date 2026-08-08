@@ -46,7 +46,7 @@ public sealed class AmharicTicketAnnouncer
                     {
                         await Task.Delay(RepeatDelay);
                         var repeatAudio = FindRepeatAudio(ticket, audioRoot);
-                        await PlayAudioFileAsync(repeatAudio ?? ticketAudio);
+                        await PlayAudioFileAsync(repeatAudio ?? ticketAudio!);
                         if (!string.IsNullOrWhiteSpace(cleanedRoomNumber))
                         {
                             await PlayRoomNumberAsync(cleanedRoomNumber, audioRoot, language);
@@ -73,7 +73,7 @@ public sealed class AmharicTicketAnnouncer
                     {
                         await Task.Delay(RepeatDelay);
                         var repeatAudio = FindRepeatAudio(ticket, audioRoot);
-                        await PlayAudioFileAsync(repeatAudio ?? ticketAudio);
+                        await PlayAudioFileAsync(repeatAudio ?? ticketAudio!);
                         await Task.Delay(RepeatDelay);
                     }
                 }
