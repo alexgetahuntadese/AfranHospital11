@@ -306,13 +306,13 @@
                                            FontSize="14"
                                            FontWeight="Black" />
                                 <TextBlock x:Name="TitleLabel"
-                                           Text="ቋንቋ ይምረጡ / Afaan filadhu"
+                                           Text="ቋንቋ ይምረጡ / Choose language"
                                            Foreground="#FFFDF7"
                                            FontSize="40"
                                            FontWeight="Black"
                                            Margin="0,6,0,0" />
                                 <TextBlock x:Name="HelperLabel"
-                                           Text="አማርኛ ወይም Afaan Oromoo ይምረጡ።"
+                                           Text="አማርኛ ወይም English ይምረጡ።"
                                            Foreground="#DDF4E6"
                                            FontSize="17"
                                            FontWeight="SemiBold"
@@ -339,15 +339,15 @@
                                 </Button>
 
                                 <Button Grid.Column="1"
-                                        x:Name="OromoButton"
+                                        x:Name="EnglishButton"
                                         Style="{StaticResource WizardButton}"
                                         Margin="12,0,0,0"
-                                        Tag="Oromo"
+                                        Tag="English"
                                         Click="LanguageButton_Click">
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="OROMO" Foreground="#D8A531" FontSize="18" FontWeight="Black" />
-                                        <TextBlock Text="Afaan Oromoo" Foreground="#10251F" FontSize="38" FontWeight="Black" Margin="0,8,0,2" TextWrapping="Wrap" />
-                                        <TextBlock Text="Afaan Oromootiin itti fufi" Foreground="#5F6F64" FontSize="16" />
+                                        <TextBlock Text="ENGL" Foreground="#D8A531" FontSize="18" FontWeight="Black" />
+                                        <TextBlock Text="English" Foreground="#10251F" FontSize="38" FontWeight="Black" Margin="0,8,0,2" />
+                                        <TextBlock Text="Continue in English" Foreground="#5F6F64" FontSize="16" />
                                     </StackPanel>
                                 </Button>
                             </Grid>

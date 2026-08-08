@@ -158,9 +158,7 @@ public sealed class AmharicTicketAnnouncer
 
         var roomPhrase = IsAmharic(language)
             ? $"ክፍል {roomNumber}"
-            : IsOromo(language)
-                ? $"kutaa {roomNumber}"
-                : $"Room {roomNumber}";
+            : $"Room {roomNumber}";
 
         await SpeakTextAsync(roomPhrase);
     }
@@ -197,7 +195,7 @@ public sealed class AmharicTicketAnnouncer
         return false;
     }
 
-    private static bool IsEmbeddedRoomInTicketAudio(string? language) => IsAmharic(language) || IsOromo(language);
+    private static bool IsEmbeddedRoomInTicketAudio(string? language) => IsAmharic(language);
 
     private static bool IsAmharic(string? language) =>
         language?.Trim().Equals("Amharic", StringComparison.OrdinalIgnoreCase) == true;
@@ -208,27 +206,13 @@ public sealed class AmharicTicketAnnouncer
         {
             return IsAmharic(language)
                 ? $"ቁጥር {ticket}"
-                : IsOromo(language)
-                    ? $"Lakkoofsa {ticket}"
-                    : $"Ticket {ticket}";
+                : $"Ticket {ticket}";
         }
 
-        if (IsAmharic(language))
-        {
-            return $"ቁጥር {ticket} ወደ ክፍል {roomNumber} ይሂዱ።";
-        }
-
-        if (IsOromo(language))
-        {
-            return $"Lakkoofsa {ticket}, gara kutaa {roomNumber} deemaa.";
-        }
-
-        return $"Ticket {ticket}. Go to room {roomNumber}.";
+        return IsAmharic(language)
+            ? $"ቁጥር {ticket} ወደ ክፍል {roomNumber} ይሂዱ።"
+            : $"Ticket {ticket}. Go to room {roomNumber}.";
     }
-
-    private static bool IsOromo(string? language) =>
-        language?.Trim().Equals("Oromo", StringComparison.OrdinalIgnoreCase) == true
-        || language?.Trim().Equals("Afaan Oromo", StringComparison.OrdinalIgnoreCase) == true;
 
     private static async Task SpeakTextAsync(string text)
     {
@@ -242,7 +226,7 @@ public sealed class AmharicTicketAnnouncer
 
     private static string FindVoiceRoot(string? language = null)
     {
-        var folder = IsOromo(language) ? "Oromo" : "Amharic";
+        var folder = IsAmharic(language) ? "Amharic" : "Amharic";
         var candidates = FindCandidateRoots(folder).ToList();
 
         var readyPath = candidates.FirstOrDefault(Directory.Exists);

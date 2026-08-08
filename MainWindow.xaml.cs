@@ -61,7 +61,15 @@ public partial class MainWindow : Window
             return;
         }
 
-        _language = language == "Oromo" ? LanguageState.Oromo : LanguageState.Amharic;
+        if (language == "Amharic")
+        {
+            _language = LanguageState.Amharic;
+        }
+        else
+        {
+            _language = LanguageState.English;
+        }
+
         _step = WizardStep.Gender;
         UpdateWizard();
     }
@@ -148,7 +156,7 @@ public partial class MainWindow : Window
     {
         // Enable/disable language buttons directly using named references
         if (AmharicButton != null) AmharicButton.IsEnabled = enabled;
-        if (OromoButton != null) OromoButton.IsEnabled = enabled;
+        if (EnglishButton != null) EnglishButton.IsEnabled = enabled;
         
         // Enable/disable gender buttons directly using named references
         if (FemaleButton != null) FemaleButton.IsEnabled = enabled;
@@ -320,8 +328,8 @@ public partial class MainWindow : Window
         PrintingHelperLabel.Text = Text.PrintingHelp;
 
         StepLabel.Text = "STEP 1 / 2";
-        TitleLabel.Text = "ቋንቋ ይምረጡ / Afaan filadhu";
-        HelperLabel.Text = "አማርኛ ወይም Afaan Oromoo ይምረጡ።";
+        TitleLabel.Text = "ቋንቋ ይምረጡ / Choose language";
+        HelperLabel.Text = "አማርኛ ወይም English ይምረጡ።";
     }
 
     private Brush FindBrush(string key)
@@ -515,7 +523,7 @@ public partial class MainWindow : Window
     private LanguageText Text => _language switch
     {
         LanguageState.Amharic => LanguageText.Amharic,
-        LanguageState.Oromo => LanguageText.Oromo,
+
         _ => LanguageText.English
     };
 
@@ -529,8 +537,7 @@ public partial class MainWindow : Window
     private enum LanguageState
     {
         English,
-        Amharic,
-        Oromo
+        Amharic
     }
 
     private sealed record LanguageText(
@@ -559,21 +566,15 @@ public partial class MainWindow : Window
     {
         public string Printing(string ticket) => this == English
             ? $"Printing {ticket}..."
-            : this == Oromo
-                ? $"{ticket} maxxanfamaa jira..."
-                : $"{ticket} በመታተም ላይ...";
+            : $"{ticket} በመታተም ላይ...";
 
         public string Printed(string ticket) => this == English
             ? $"Printed {ticket}. Go to Registration Counter 2."
-            : this == Oromo
-                ? $"{ticket} maxxanfame. Gara Galmee Kaawuntara 2 deemaa."
-                : $"{ticket} ታትሟል። ወደ መመዝገቢያ ቆጣሪ 2 ይሂዱ።";
+            : $"{ticket} ታትሟል። ወደ መመዝገቢያ ቆጣሪ 2 ይሂዱ።";
 
         public string PrintNotConfirmed(string ticket) => this == English
             ? $"{ticket} is ready. Printer was not confirmed."
-            : this == Oromo
-                ? $"{ticket} qophaa'e. Maxxansi hin mirkanoofne."
-                : $"{ticket} ዝግጁ ነው። ፕሪንተሩ አልተረጋገጠም።";
+            : $"{ticket} ዝግጁ ነው። ፕሪንተሩ አልተረጋገጠም።";
 
         public string GenderName(string? gender) => gender == "Female" ? Female : Male;
 
@@ -625,28 +626,5 @@ public partial class MainWindow : Window
             "ቆጣሪ፦ መመዝገቢያ 2",
             "እባክዎ ይህን ቲኬት በግልጽ ያስቀምጡ።");
 
-        public static readonly LanguageText Oromo = new(
-            "Kiyooskii galmee",
-            "TARKAANFII 2 / 2",
-            "Saala filadhu",
-            "Erga filattee booda tikeetiin ofumaan maxxanfama.",
-            "D",
-            "Dubartii",
-            "Tikeetii galmee dubartii maxxansiisi",
-            "Dh",
-            "Dhiira",
-            "Tikeetii galmee dhiiraa maxxansiisi",
-            "Duuba",
-            "Haaraa",
-            "Oromo",
-            "Afaan filatameera.",
-            "Galatoomi",
-            "Tikeetiin galmee kee qophaa'eera.",
-            "Maaloo tikeetii kee fudhadhu. Gareen keenya lakkoofsa kee dhi soon ni waama.",
-            "Tikeetii Galmee",
-            "Afaan",
-            "Saala",
-            "Kaawuntara: Galmee 2",
-            "Maaloo tikeetii kana mul'isuuf qabadhu.");
     }
 }

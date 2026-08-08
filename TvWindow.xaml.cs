@@ -189,10 +189,10 @@ public partial class TvWindow : Window
         RoomTicket5.Text = $"M{_fallbackTicket + 5:000}";
         SetQueueRows(new[]
         {
-            new TicketDto($"M{_fallbackTicket + 1:000}", "Male", "Oromo", "Waiting", DateTime.Now),
+            new TicketDto($"M{_fallbackTicket + 1:000}", "Male", "English", "Waiting", DateTime.Now),
             new TicketDto($"F{_fallbackTicket + 2:000}", "Female", "Amharic", "Waiting", DateTime.Now),
             new TicketDto($"M{_fallbackTicket + 3:000}", "Male", "English", "Waiting", DateTime.Now),
-            new TicketDto($"F{_fallbackTicket + 4:000}", "Female", "Oromo", "Waiting", DateTime.Now),
+            new TicketDto($"F{_fallbackTicket + 4:000}", "Female", "English", "Waiting", DateTime.Now),
             new TicketDto($"M{_fallbackTicket + 5:000}", "Male", "Amharic", "Waiting", DateTime.Now),
             new TicketDto($"F{_fallbackTicket + 6:000}", "Female", "English", "Waiting", DateTime.Now)
         });
