@@ -1,5 +1,7 @@
 # Afran Hospital Queue System
 
+For day-to-day operation, see [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
+
 Fullscreen WPF desktop screens for a LAN-deployed registration queue:
 
 - `kiosk`: patient registration flow, language -> gender -> ticket print.
