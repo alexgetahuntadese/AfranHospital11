@@ -57,6 +57,8 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseRateLimiter();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 var configuredApiKey = builder.Configuration["Security:ApiKey"]?.Trim();
 app.Use(async (context, next) =>
 {

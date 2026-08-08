@@ -7,20 +7,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
-    <EnableDefaultApplicationDefinition>true</EnableDefaultApplicationDefinition>
-    <EnableDefaultPageItems>true</EnableDefaultPageItems>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Keep code-behind and XAML explicitly paired so clean/CI builds always
-         run the WPF markup compiler for newly added windows. -->
-    <Page Update="*.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Update="*.xaml.cs">
-      <DependentUpon>$([System.String]::Copy('%(Filename)')).xaml</DependentUpon>
-    </Compile>
+    <ApplicationDefinition Include="App.xaml" />
+    <Page Include="DoctorWindow.xaml" />
+    <Page Include="LauncherWindow.xaml" />
+    <Page Include="MainWindow.xaml" />
+    <Page Include="ServerManagerWindow.xaml" />
+    <Page Include="TvWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>

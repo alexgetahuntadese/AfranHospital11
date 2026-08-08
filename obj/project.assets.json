@@ -1324,6 +1324,7 @@
       "outputPath": "C:\\Users\\USER\\Desktop\\AfranHospital11\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
+        "C:\\Users\\USER\\Desktop\\AfranHospital11\\NuGet.Config",
         "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [

@@ -80,6 +80,10 @@ Then copy the generated `release` folder and run
 published `QueueApi\QueueApi.exe` next to the desktop application, so a .NET
 installation is not required.
 
+## Web TV Display
+
+After starting Queue API, open `http://SERVER-IP:5000/tv/` in any browser on the TV or another LAN computer. The display updates automatically and supports full-screen mode.
+
 ## LAN Deployment Architecture
 
 Recommended machine layout:
